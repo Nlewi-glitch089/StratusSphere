@@ -1,12 +1,11 @@
 import React from 'react';
-import { getWeatherByCity } from './useWeatherData.js';
 
 /**
  * Utility to handle OpenAI chat integration for weather queries
- * OpenAI provides context, optional weather API provides real-time data
+ * OpenAI provides context, real-time weather API provides live data
  */
 
- /**
+/**
  * Fetch REAL-TIME weather data using Open-Meteo (free, no API key needed)
  */
 async function fetchRealTimeWeather(city) {
@@ -22,8 +21,8 @@ async function fetchRealTimeWeather(city) {
       return null;
     }
 
-    const { latitude, longitude, name, country } = geoData.results[0];
-    console.log(`Found: ${name}, ${country} (${latitude}, ${longitude})`);
+    const { latitude, longitude, name, country, admin1 } = geoData.results[0];
+    console.log(`Found: ${name}, ${admin1}, ${country} (${latitude}, ${longitude})`);
 
     // Fetch real-time weather for the coordinates
     const weatherResponse = await fetch(
@@ -39,14 +38,41 @@ async function fetchRealTimeWeather(city) {
     console.log("Real-time weather data:", weatherData);
 
     return {
-      location: { name, country, latitude, longitude },
+      location: { name, region: admin1, country, latitude, longitude },
       current: {
         temp_c: weatherData.current.temperature_2m,
+        temp_f: Math.round(weatherData.current.temperature_2m * 9/5 + 32),
         humidity: weatherData.current.relative_humidity_2m,
         wind_kph: weatherData.current.wind_speed_10m,
-        condition: getWeatherCondition(weatherData.current.weather_code),
+        feelslike_c: weatherData.current.temperature_2m - 1,
+        condition: {
+          text: getWeatherCondition(weatherData.current.weather_code),
+          icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
+        },
       },
-      forecast: weatherData,
+      forecast: {
+        forecastday: weatherData.daily.time.map((date, idx) => ({
+          date,
+          day: {
+            maxtemp_c: weatherData.daily.temperature_2m_max[idx],
+            mintemp_c: weatherData.daily.temperature_2m_min[idx],
+            condition: {
+              text: getWeatherCondition(weatherData.daily.weather_code[idx]),
+              icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
+            },
+          },
+          hour: weatherData.hourly.time
+            .map((time, hourIdx) => ({
+              time,
+              temp_c: weatherData.hourly.temperature_2m[hourIdx],
+              condition: {
+                text: getWeatherCondition(weatherData.hourly.weather_code[hourIdx]),
+                icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
+              },
+            }))
+            .filter(h => h.time.startsWith(date)),
+        })),
+      },
     };
   } catch (error) {
     console.error("Error fetching real-time weather:", error);
@@ -105,11 +131,12 @@ export async function sendChatMessage(userMessage, conversationHistory) {
     // If a location is found, fetch REAL-TIME weather
     if (city) {
       try {
-        const realWeather = await getWeatherByCity(city);
+        console.log(`Fetching real-time weather for: ${city}`);
+        const realWeather = await fetchRealTimeWeather(city);
         if (realWeather) {
           weatherContext = `
-[REAL-TIME WEATHER DATA for ${realWeather.location.name}, ${realWeather.location.country}]
-Current: ${Math.round(realWeather.current.temp_c)}°C, ${realWeather.current.condition.text}
+[REAL-TIME WEATHER DATA for ${realWeather.location.name}, ${realWeather.location.region || ""} ${realWeather.location.country}]
+Current: ${Math.round(realWeather.current.temp_c)}°C (${realWeather.current.temp_f}°F), ${realWeather.current.condition.text}
 Humidity: ${realWeather.current.humidity}%
 Wind: ${Math.round(realWeather.current.wind_kph)} kph
 Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
@@ -133,7 +160,7 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
         messages: [
           {
             role: "system",
-            content: `You are Storm, a helpful weather assistant. ${weatherContext ? "You have been provided with REAL-TIME weather data below. Use this accurate data in your response." : "Provide helpful weather information based on typical patterns."} Be conversational, friendly, and accurate.${weatherContext ? "\n" + weatherContext : ""}`,
+            content: `You are Storm, a helpful and friendly weather assistant. ${weatherContext ? "You have been provided with REAL-TIME weather data. Use this accurate current data in your response." : "Provide helpful weather information based on typical climate patterns."} Be conversational, accurate, and engaging. If you have real-time data, reference it specifically.${weatherContext ? "\n" + weatherContext : ""}`,
           },
           ...conversationHistory,
           { role: "user", content: userMessage },
@@ -159,20 +186,27 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
 }
 
 /**
- * Extract city name from user message using multiple strategies
+ * Extract city/location name from user message (supports city names and ZIP codes)
  */
 function extractCityName(message) {
   // Clean message
   const msg = message.toLowerCase();
 
-  // Common weather-related keywords to help identify city references
+  // Common weather-related keywords
   const weatherKeywords = ['weather', 'climate', 'forecast', 'temperature', 'conditions', 'rain', 'snow', 'hot', 'cold', 'is it', 'what', 'how'];
+
+  // Strategy 0: Check for ZIP codes (5 digits)
+  const zipMatch = message.match(/\b(\d{5})\b/);
+  if (zipMatch) {
+    console.log(`Detected ZIP code: ${zipMatch[1]}`);
+    return zipMatch[1];
+  }
 
   // Strategy 1: Direct patterns like "weather in [City]", "weather for [City]"
   const directPatterns = [
     /(?:weather|forecast|climate|conditions?)\s+(?:in|for|at|near)\s+([A-Za-z\s]+?)(?:\s+(?:weather|forecast|climate|now|today|today's|is|has|\?|\.)|$)/i,
-    /in\s+([A-Za-z]+(?:\s+[A-ZaZ]+)?)\s+(?:weather|forecast|climate|conditions?)/i,
-    /(?:weather|forecast|climate)\s+for\s+([A-Za-z]+(?:\s+[A-Za-z]+)?)/i,
+    /in\s+([A-ZaZ]+(?:\s+[A-ZaZ]+)?)\s+(?:weather|forecast|climate|conditions?)/i,
+    /(?:weather|forecast|climate)\s+for\s+([A-ZaZ]+(?:\s+[A-Za-z]+)?)/i,
   ];
 
   for (const pattern of directPatterns) {
@@ -210,7 +244,7 @@ function extractCityName(message) {
 }
 
 /**
- * Fetch real-time weather data for a city using Tomorrow.io
+ * Fetch real-time weather data for a city
  */
 export async function getWeatherForCity(city) {
   if (!city) {
@@ -219,8 +253,8 @@ export async function getWeatherForCity(city) {
   }
 
   try {
-    console.log(`Fetching weather for city: "${city}"`);
-    const weather = await getWeatherByCity(city);
+    console.log(`Fetching weather for: "${city}"`);
+    const weather = await fetchRealTimeWeather(city);
     return weather;
   } catch (error) {
     console.warn(`Could not fetch weather data for "${city}":`, error);

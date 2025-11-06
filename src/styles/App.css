@@ -136,42 +136,66 @@ button:active {
   max-width: 400px;
   margin: 2rem auto;
 }
+
 .weather-card .city {
   font-size: 2rem;
   margin: 0;
+  color: var(--electric-yellow);
+  text-shadow: 0 0 8px rgba(245, 233, 96, 0.4);
 }
+
+/* Centered Weather Icon Container */
+.weather-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.weather-icon-large {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 0 12px rgba(0, 180, 255, 0.6));
+  margin: 0 auto;
+}
+
 .weather-card .temperature {
   font-size: 3rem;
   color: var(--electric-yellow);
   text-shadow: 0 0 10px rgba(245, 233, 96, 0.6);
   margin: 0;
 }
+
 .weather-card .condition {
   font-size: 1.2rem;
   text-transform: capitalize;
   margin: 0;
+  color: var(--silver-mist);
 }
-.weather-card .icon {
-  width: 100px;
-  height: 100px;
-  filter: drop-shadow(0 0 8px rgba(122, 63, 242, 0.5));
-}
+
 .weather-card .temperature-f {
   font-size: 1.2rem;
   color: var(--silver-mist);
   margin: -0.5rem 0 0.5rem 0;
 }
+
+/* Real-Time Weather Details */
 .weather-details {
-  background: rgba(122, 63, 242, 0.1);
+  background: rgba(122, 63, 242, 0.15);
   border-radius: 8px;
   padding: 1rem;
   margin-top: 1rem;
   border-left: 3px solid var(--violet-surge);
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .weather-details p {
   margin: 0.5rem 0;
   font-size: 0.95rem;
   text-align: center;
+  color: var(--silver-mist);
 }
 
 /* === Hourly Forecast === */

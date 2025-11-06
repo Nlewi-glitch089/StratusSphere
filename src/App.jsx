@@ -65,27 +65,8 @@ function App() {
 
       <div className="divider"></div>
 
-      {/* Current Weather Card */}
+      {/* Current Weather Card - Now displays real-time data */}
       {weatherData && <WeatherCard data={weatherData} />}
-
-      <div className="divider"></div>
-
-      {/* Forecast Card */}
-      <section className="card">
-        <h2>Today's Forecast</h2>
-        <p>Expect scattered thunderstorms with a touch of magic in the air.</p>
-        {showDetails && (
-          <section className="details-expanded">
-            <p><strong>Humidity:</strong> 65%</p>
-            <p><strong>Wind Speed:</strong> 12 mph</p>
-            <p><strong>Pressure:</strong> 1013 mb</p>
-            <p><strong>UV Index:</strong> 5</p>
-          </section>
-        )}
-        <button onClick={() => setShowDetails(!showDetails)}>
-          {showDetails ? "Hide Details" : "View Details"}
-        </button>
-      </section>
 
       <div className="divider"></div>
 
