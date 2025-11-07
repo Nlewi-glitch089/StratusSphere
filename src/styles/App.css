@@ -362,6 +362,59 @@ button:active {
   box-shadow: 0 0 8px rgba(245, 233, 96, 0.3);
 }
 
+/* === Hourly Line Chart === */
+.hourly-line-chart {
+  position: relative;
+  background: rgba(122, 63, 242, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 1rem 0;
+  border: 1px solid rgba(122, 63, 242, 0.2);
+}
+
+.hourly-line-chart canvas {
+  border-radius: 8px;
+  background: rgba(30, 30, 58, 0.3);
+  max-width: 100%;
+  height: auto;
+}
+
+
+
+.chart-tooltip {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(27, 30, 42, 0.95);
+  border: 1px solid var(--violet-surge);
+  border-radius: 8px;
+  padding: 0.75rem;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 0 15px rgba(122, 63, 242, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.tooltip-content {
+  text-align: center;
+  color: var(--silver-mist);
+  font-size: 0.9rem;
+}
+
+.tooltip-content strong {
+  color: var(--electric-yellow);
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.tooltip-content .condition {
+  color: var(--silver-mist);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+  opacity: 0.8;
+}
+
 /* === Daily Forecast === */
 .daily-forecast {
   margin-top: 1.5rem;
