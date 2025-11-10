@@ -362,6 +362,18 @@ button:active {
   box-shadow: 0 0 8px rgba(245, 233, 96, 0.3);
 }
 
+/* Light Mode - See More Button */
+[data-theme="light"] .see-more-btn {
+  background: rgba(157, 126, 232, 0.15);
+  border: 1px solid rgba(157, 126, 232, 0.4);
+  color: #d4a500;
+}
+
+[data-theme="light"] .see-more-btn:hover {
+  background: rgba(157, 126, 232, 0.25);
+  box-shadow: 0 0 8px rgba(212, 165, 0, 0.3);
+}
+
 /* === Daily Forecast === */
 .daily-forecast {
   margin-top: 1.5rem;

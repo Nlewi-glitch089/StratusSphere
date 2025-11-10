@@ -61,6 +61,8 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  z-index: 1;
 }
 
 /* Animated Background Glow */
@@ -368,6 +370,39 @@ button:disabled {
   color: var(--violet-surge);
   border-color: rgba(157, 126, 232, 0.6);
   box-shadow: 0 4px 15px rgba(157, 126, 232, 0.2);
+}
+
+/* === See More Button === */
+.see-more-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(122, 63, 242, 0.2);
+  border: 1px solid rgba(122, 63, 242, 0.4);
+  border-radius: 6px;
+  color: var(--electric-yellow);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.see-more-btn:hover {
+  background: rgba(122, 63, 242, 0.35);
+  box-shadow: 0 0 8px rgba(245, 233, 96, 0.3);
+}
+
+/* Light Mode - See More Button */
+[data-theme="light"] .see-more-btn {
+  background: rgba(157, 126, 232, 0.15);
+  border: 1px solid rgba(157, 126, 232, 0.4);
+  color: #d4a500;
+}
+
+[data-theme="light"] .see-more-btn:hover {
+  background: rgba(157, 126, 232, 0.25);
+  box-shadow: 0 0 8px rgba(212, 165, 0, 0.3);
 }
 
 /* === Cards & Containers === */

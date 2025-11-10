@@ -8,6 +8,7 @@ import HourlyLineChart from "./components/HourlyLineChart";
 import ScheduleTable from "./components/ScheduleTable";
 import Settings from "./components/Settings";
 import About from "./components/About";
+import BackgroundAnimation from "./components/BackgroundAnimation";
 import { TemperatureProvider } from "./context/TemperatureContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import {
@@ -39,8 +40,16 @@ function App() {
 	const [selectedDay, setSelectedDay] = useState(0); // 0 = today, 1 = tomorrow, 2 = day after
 	const [showSettings, setShowSettings] = useState(false);
 	const [showChatBubble, setShowChatBubble] = useState(false);
-	const [showAbout, setShowAbout] = useState(false);
-	const [hasVisitedMain, setHasVisitedMain] = useState(false);
+	const [hasVisitedMain, setHasVisitedMain] = useState(() => {
+		// Check if user has visited before
+		const hasVisited = localStorage.getItem("stratussphere_welcomed");
+		return !!hasVisited;
+	});
+	const [showAbout, setShowAbout] = useState(() => {
+		// Show About page on first visit
+		const hasVisited = localStorage.getItem("stratussphere_welcomed");
+		return !hasVisited;
+	});
 	const [scheduleData, setScheduleData] = useState(null);
 	const [showScheduleTable, setShowScheduleTable] = useState(false);
 	const [outfitImages, setOutfitImages] = useState({});
@@ -254,6 +263,7 @@ function App() {
 	return (
 		<TemperatureProvider>
 			<ThemeProvider>
+				<BackgroundAnimation />
 				<div className="app">
 					{/* Header Section - Improved Glow */}
 					<header className="header">
