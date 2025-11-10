@@ -1,0 +1,456 @@
+import React, { useState, useRef } from "react";
+
+function ScheduleTable({ scheduleData, onClose, onSave }) {
+  const [schedule, setSchedule] = useState(scheduleData || []);
+  const [isEditing, setIsEditing] = useState(null);
+  const [editValue, setEditValue] = useState("");
+  const [columnOrder, setColumnOrder] = useState(['time', 'activity', 'weather', 'outfit', 'actions']);
+  const [draggedColumn, setDraggedColumn] = useState(null);
+  const tableRef = useRef(null);
+
+  // Add new schedule item
+  const addScheduleItem = () => {
+    const newItem = {
+      time: "12:00 PM",
+      activity: "New activity",
+      weather: "",
+      outfit: ""
+    };
+    setSchedule([...schedule, newItem]);
+  };
+
+  // Delete schedule item
+  const deleteScheduleItem = (index) => {
+    const updatedSchedule = schedule.filter((_, i) => i !== index);
+    setSchedule(updatedSchedule);
+  };
+
+  // Start editing a cell
+  const startEditing = (rowIndex, field, currentValue) => {
+    setIsEditing(`${rowIndex}-${field}`);
+    setEditValue(currentValue);
+  };
+
+  // Save edit
+  const saveEdit = (rowIndex, field) => {
+    const updatedSchedule = [...schedule];
+    if (field === 'notes') {
+      // For notes, we need to handle weather and outfit separately
+      updatedSchedule[rowIndex].weather = editValue.includes('🌤️') ? editValue : "";
+      updatedSchedule[rowIndex].outfit = editValue.includes('👔') ? editValue : "";
+    } else {
+      updatedSchedule[rowIndex][field] = editValue;
+    }
+    setSchedule(updatedSchedule);
+    setIsEditing(null);
+    setEditValue("");
+  };
+
+  // Cancel edit
+  const cancelEdit = () => {
+    setIsEditing(null);
+    setEditValue("");
+  };
+
+  // Handle column drag start
+  const handleColumnDragStart = (e, column) => {
+    setDraggedColumn(column);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  // Handle column drag over
+  const handleColumnDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  // Handle column drop
+  const handleColumnDrop = (e, targetColumn) => {
+    e.preventDefault();
+    if (!draggedColumn || draggedColumn === targetColumn) {
+      setDraggedColumn(null);
+      return;
+    }
+
+    const draggedIndex = columnOrder.indexOf(draggedColumn);
+    const targetIndex = columnOrder.indexOf(targetColumn);
+    
+    const newOrder = [...columnOrder];
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedColumn);
+    
+    setColumnOrder(newOrder);
+    setDraggedColumn(null);
+  };
+
+  // Get column headers in the correct order
+  const columnHeaders = {
+    time: 'Time',
+    activity: 'Activity',
+    weather: 'Weather Notes',
+    outfit: 'Outfit Suggestions',
+    actions: 'Actions'
+  };
+
+  // Render table cell based on column type
+  const renderTableCell = (item, rowIndex, column) => {
+    switch(column) {
+      case 'time':
+        return (
+          <td 
+            key="time"
+            className="editable-cell time-cell"
+            onClick={() => startEditing(rowIndex, 'time', item.time)}
+          >
+            {isEditing === `${rowIndex}-time` ? (
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={() => saveEdit(rowIndex, 'time')}
+                onKeyDown={(e) => handleKeyPress(e, rowIndex, 'time')}
+                autoFocus
+                className="edit-input"
+              />
+            ) : (
+              <span className="time-display">{item.time}</span>
+            )}
+          </td>
+        );
+      case 'activity':
+        return (
+          <td 
+            key="activity"
+            className="editable-cell activity-cell"
+            onClick={() => startEditing(rowIndex, 'activity', item.activity)}
+          >
+            {isEditing === `${rowIndex}-activity` ? (
+              <textarea
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={() => saveEdit(rowIndex, 'activity')}
+                onKeyDown={(e) => handleKeyPress(e, rowIndex, 'activity')}
+                autoFocus
+                className="edit-textarea"
+                rows="2"
+              />
+            ) : (
+              <span>{item.activity}</span>
+            )}
+          </td>
+        );
+      case 'weather':
+        return (
+          <td 
+            key="weather"
+            className="editable-cell weather-cell"
+            onClick={() => startEditing(rowIndex, 'weather', item.weather)}
+          >
+            {isEditing === `${rowIndex}-weather` ? (
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={() => saveEdit(rowIndex, 'weather')}
+                onKeyDown={(e) => handleKeyPress(e, rowIndex, 'weather')}
+                autoFocus
+                className="edit-input"
+                placeholder="☀️ Temperature, conditions, wind, precipitation..."
+              />
+            ) : (
+              <span className="weather-note">{item.weather || "Add weather notes..."}</span>
+            )}
+          </td>
+        );
+      case 'outfit':
+        return (
+          <td 
+            key="outfit"
+            className="editable-cell outfit-cell"
+            onClick={() => startEditing(rowIndex, 'outfit', item.outfit)}
+          >
+            {isEditing === `${rowIndex}-outfit` ? (
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={() => saveEdit(rowIndex, 'outfit')}
+                onKeyDown={(e) => handleKeyPress(e, rowIndex, 'outfit')}
+                autoFocus
+                className="edit-input"
+                placeholder="👕 Layers, accessories, shoes, materials..."
+              />
+            ) : (
+              <span className="outfit-note">{item.outfit || "Add outfit suggestions..."}</span>
+            )}
+          </td>
+        );
+      case 'actions':
+        return (
+          <td key="actions" className="actions-cell">
+            <button 
+              className="delete-btn"
+              onClick={() => deleteScheduleItem(rowIndex)}
+              title="Delete this item"
+            >
+              🗑️
+            </button>
+          </td>
+        );
+      default:
+        return null;
+    }
+  };
+
+  // Handle key press in edit mode
+  const handleKeyPress = (e, rowIndex, field) => {
+    if (e.key === 'Enter') {
+      saveEdit(rowIndex, field);
+    } else if (e.key === 'Escape') {
+      cancelEdit();
+    }
+  };
+
+  // Export to CSV
+  const exportToCSV = () => {
+    const csvContent = [
+      ['Time', 'Activity', 'Weather', 'Outfit'],
+      ...schedule.map(item => [
+        item.time,
+        item.activity,
+        item.weather,
+        item.outfit
+      ])
+    ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `schedule-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  // Print schedule
+  const printSchedule = () => {
+    const printWindow = window.open('', '_blank');
+    const printContent = `
+      <html>
+        <head>
+          <title>Daily Schedule</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #f5f5f5; font-weight: bold; }
+            .header { text-align: center; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Daily Schedule</h1>
+            <p>${new Date().toLocaleDateString()}</p>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Time</th><th>Activity</th><th>Weather</th><th>Outfit</th></tr>
+            </thead>
+            <tbody>
+              ${schedule.map(item => `
+                <tr>
+                  <td>${item.time}</td>
+                  <td>${item.activity}</td>
+                  <td>${item.weather}</td>
+                  <td>${item.outfit}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  return (
+    <div className="schedule-table-overlay">
+      <div className="schedule-table-container">
+        <div className="schedule-table-header">
+          <div className="schedule-table-title">
+            <h2>📅 Daily Schedule Editor</h2>
+            <p>Edit your personalized schedule - click any cell to modify • Drag column headers to reorder</p>
+          </div>
+          <div className="schedule-table-actions">
+            <button className="schedule-btn add-btn" onClick={addScheduleItem}>
+              ➕ Add Item
+            </button>
+            <button className="schedule-btn export-btn" onClick={exportToCSV}>
+              📥 Export CSV
+            </button>
+            <button className="schedule-btn print-btn" onClick={printSchedule}>
+              🖨️ Print
+            </button>
+            <button className="schedule-btn save-btn" onClick={() => onSave && onSave(schedule)}>
+              💾 Save
+            </button>
+            <button className="schedule-close-btn" onClick={onClose}>×</button>
+          </div>
+        </div>
+
+        <div className="schedule-table-wrapper">
+          <div className="schedule-nav-controls">
+            <button 
+              className="schedule-nav-btn"
+              onClick={() => tableRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
+              title="Scroll to top"
+            >
+              ⬆️ Top
+            </button>
+            <button 
+              className="schedule-nav-btn"
+              onClick={() => tableRef.current?.scrollTo({ top: tableRef.current.scrollHeight, behavior: 'smooth' })}
+              title="Scroll to bottom"
+            >
+              ⬇️ Bottom
+            </button>
+          </div>
+
+          <table className="editable-schedule-table" ref={tableRef}>
+            <thead>
+              <tr>
+                {columnOrder.map((column) => (
+                  <th
+                    key={column}
+                    draggable
+                    onDragStart={(e) => handleColumnDragStart(e, column)}
+                    onDragOver={handleColumnDragOver}
+                    onDrop={(e) => handleColumnDrop(e, column)}
+                    className={draggedColumn === column ? 'dragging' : ''}
+                    title="Drag to reorder columns"
+                  >
+                    {columnHeaders[column]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {schedule.map((item, rowIndex) => (
+                <tr key={rowIndex} className="schedule-table-row">
+                  <td 
+                    className="editable-cell time-cell"
+                    onClick={() => startEditing(rowIndex, 'time', item.time)}
+                  >
+                    {isEditing === `${rowIndex}-time` ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={() => saveEdit(rowIndex, 'time')}
+                        onKeyDown={(e) => handleKeyPress(e, rowIndex, 'time')}
+                        autoFocus
+                        className="edit-input"
+                      />
+                    ) : (
+                      <span className="time-display">{item.time}</span>
+                    )}
+                  </td>
+                  
+                  <td 
+                    className="editable-cell activity-cell"
+                    onClick={() => startEditing(rowIndex, 'activity', item.activity)}
+                  >
+                    {isEditing === `${rowIndex}-activity` ? (
+                      <textarea
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={() => saveEdit(rowIndex, 'activity')}
+                        onKeyDown={(e) => handleKeyPress(e, rowIndex, 'activity')}
+                        autoFocus
+                        className="edit-textarea"
+                        rows="2"
+                      />
+                    ) : (
+                      <span>{item.activity}</span>
+                    )}
+                  </td>
+                  
+                  <td 
+                    className="editable-cell weather-cell"
+                    onClick={() => startEditing(rowIndex, 'weather', item.weather)}
+                  >
+                    {isEditing === `${rowIndex}-weather` ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={() => saveEdit(rowIndex, 'weather')}
+                        onKeyDown={(e) => handleKeyPress(e, rowIndex, 'weather')}
+                        autoFocus
+                        className="edit-input"
+                        placeholder="☀️ Temperature, conditions, wind, precipitation..."
+                      />
+                    ) : (
+                      <span className="weather-note">{item.weather || "Add weather notes..."}</span>
+                    )}
+                  </td>
+                  
+                  <td 
+                    className="editable-cell outfit-cell"
+                    onClick={() => startEditing(rowIndex, 'outfit', item.outfit)}
+                  >
+                    {isEditing === `${rowIndex}-outfit` ? (
+                      <input
+                        type="text"
+                        value={editValue}
+                        onChange={(e) => setEditValue(e.target.value)}
+                        onBlur={() => saveEdit(rowIndex, 'outfit')}
+                        onKeyDown={(e) => handleKeyPress(e, rowIndex, 'outfit')}
+                        autoFocus
+                        className="edit-input"
+                        placeholder="� Layers, accessories, shoes, materials..."
+                      />
+                    ) : (
+                      <span className="outfit-note">{item.outfit || "Add outfit suggestions..."}</span>
+                    )}
+                  </td>
+                  
+                  <td className="actions-cell">
+                    <button 
+                      className="delete-btn"
+                      onClick={() => deleteScheduleItem(rowIndex)}
+                      title="Delete this item"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {schedule.length === 0 && (
+          <div className="empty-schedule">
+            <div className="empty-icon">📅</div>
+            <p>No schedule items yet.</p>
+            <button className="schedule-btn add-btn" onClick={addScheduleItem}>
+              ➕ Add Your First Item
+            </button>
+          </div>
+        )}
+
+        <div className="schedule-table-footer">
+          <p className="schedule-help">
+            <strong>💡 Tips:</strong> Click any cell to edit • Enter to save • Escape to cancel • 
+            Drag column headers to reorder • Weather: Add temp, conditions, wind • Outfit: Add layers, accessories, shoes
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default ScheduleTable;

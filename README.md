@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ☁️ StratusSphere
 
 **Real-Time Weather, Reimagined.**
@@ -7,198 +6,226 @@ StratusSphere is a responsive and visually engaging weather web application buil
 
 ## 🌦️ Features
 
-- **Real-Time Weather Data**: Displays up-to-date conditions powered by free weather APIs (Open-Meteo or WeatherAPI)
+- **Real-Time Weather Data**: WeatherAPI.com integration with 10-day forecast and hourly data
+- **AI-Powered Assistance**: ChatGPT provides weather-based outfit recommendations, activity suggestions, and personalized scheduling
 - **Interactive Search**: Look up weather details by city with instant updates on temperature, conditions, and forecasts
 - **Dynamic Icons & Backgrounds**: Visuals adjust based on weather type (sunny, cloudy, rainy, etc.) for immersion
+- **Smart Schedule Editor**: AI-generated schedules with auto-populated weather and outfit suggestions
 - **Responsive Design**: Optimized for desktop and mobile with seamless performance across all devices
 - **Smooth UI Experience**: Intuitive layouts and animated hover effects enhance usability and flow
-- **Client-Side Only**: No backend server required — all logic runs in the browser
 
-## 🧠 Project Goals
+## 🧠 Project Architecture
 
-StratusSphere was developed to:
-
-- Explore the integration of front-end design with live APIs
-- Demonstrate React-based interactivity and state management
-- Deliver an app experience that's both functional and visually appealing
-- Encourage collaborative problem-solving in a real-world development setting
-- Build a polished, presentation-ready product
+- **Weather Data**: WeatherAPI.com handles all real-time forecasts (current, hourly, daily, 10-day)
+- **AI Intelligence**: ChatGPT provides weather analysis, outfit recommendations, activity suggestions, and schedule creation
+- **Schedule Management**: AI-generated schedules auto-populate with weather and outfit data
+- **Outfit Visualization**: Unsplash API provides images for outfit suggestions
 
 ## 🧩 Tech Stack
 
-- **Frontend Framework**: React.js (Functional Components & Hooks)
-- **Styling**: CSS modules + CSS variables for theme management
-- **Data Source**: Open-Meteo or WeatherAPI (free, no backend required)
+- **Frontend Framework**: React 18 with Hooks
+- **Styling**: CSS3 with animations and responsive design
+- **APIs**:
+  - **WeatherAPI.com**: Real-time weather data (free tier, no credit card)
+  - **OpenAI GPT-4o-mini**: AI chat and suggestions
+  - **Unsplash API**: Outfit images
+- **Build Tool**: Vite
 - **Version Control**: GitHub / Git
-- **Deployment**: Vercel or Netlify
 
 ## 📂 Project Structure
 
 ```
-/src
- ├── /components    → Reusable UI parts (WeatherCard, SearchBar, etc.)
- ├── /pages         → Main layout screens (Home, Forecast)
- ├── /hooks         → Custom React hooks (useWeatherData)
- ├── /styles        → CSS modules and global theme
- ├── /assets        → Images, icons, and media
- └── App.jsx        → Root component
+src/
+├── components/
+│   ├── ChatBubble.jsx       → AI chat interface with schedule detection
+│   ├── ScheduleTable.jsx    → Interactive schedule editor with drag-and-drop
+│   ├── WeatherCard.jsx      → Weather display card
+│   ├── SearchBar.jsx        → Location search with smart detection
+│   └── HourlyLineChart.jsx  → Forecast visualization
+├── hooks/
+│   ├── useWeatherChat.js    → WeatherAPI.com integration + ChatGPT
+│   └── useWeatherData.js    → Weather state management
+├── styles/
+│   ├── App.css              → Main styles
+│   └── index.css            → Global styles
+├── App.jsx                  → Root component
+└── main.jsx                 → Entry point
 ```
 
-## 🖼️ UI Overview
+## 🔧 Setup Instructions
 
-The interface features:
+### 1. Install Dependencies
 
-- A central weather display showing current temperature, condition, and location
-- A search bar for quick city lookups with error handling
-- Weather cards with animated hover states and dynamic styling
-- Color palettes inspired by natural sky gradients and storm tones
-- Mobile-responsive layouts that maintain visual hierarchy
+```bash
+npm install
+```
 
-## 💡 Future Enhancements
+### 2. Configure API Keys
 
-- Multi-day forecasts with visual trend graphs
-- Dark/light mode toggle
-- User location detection for instant local weather
-- Historical data and seasonal pattern integration
+Create a `.env.local` file in the project root:
+
+```env
+# OpenAI API Key - Get from https://platform.openai.com/api-keys
+VITE_OPENAI_API_KEY=sk-proj-your-key-here
+
+# WeatherAPI.com Key - Get from https://www.weatherapi.com/
+# Free tier: 1 million calls/month, 10-day forecast, hourly data
+VITE_WEATHERAPI_KEY=your-key-here
+
+# Unsplash API Key - Get from https://unsplash.com/developers
+# (Optional - falls back to generic outfit image if missing)
+VITE_UNSPLASH_KEY=your-key-here
+```
+
+**See [WEATHERAPI_SETUP.md](./WEATHERAPI_SETUP.md) for detailed WeatherAPI.com setup instructions.**
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+Visit `http://localhost:5173` in your browser.
+
+## 📖 How It Works
+
+### Weather Forecasting
+
+1. User enters a city or asks about weather
+2. SearchBar detects location input and converts to weather query
+3. App calls WeatherAPI.com for real-time data
+4. Forecast displays as interactive cards and hourly charts
+
+### AI Assistance
+
+1. User asks for schedule, outfit, or activity recommendations
+2. ChatGPT receives real-time weather context from WeatherAPI.com
+3. AI generates personalized suggestions (weather notes, outfits, activities)
+4. For schedules: Each item auto-generates weather + outfit suggestions + images
+
+### Smart Schedules
+
+1. User asks AI to create a schedule (e.g., "Plan my day in NYC")
+2. AI generates schedule structure with times and activities
+3. For each item: Weather and outfit are auto-generated from WeatherAPI.com data
+4. Outfit images fetch from Unsplash
+5. User can edit, reorder, or delete items in the interactive editor
+
+## 🎨 Key Features in Detail
+
+### Real-Time Weather Integration
+
+- Automatic city detection from user input
+- City slang recognition (philly → Philadelphia, NYC → New York, etc.)
+- 10-day forecast with hourly breakdowns
+- Current conditions: temperature, humidity, wind speed, "feels like"
+- Weather alerts and severe weather notifications
+
+### AI-Powered Suggestions
+
+- **Weather Analysis**: Current conditions + forecast context
+- **Outfit Recommendations**: Weather-appropriate clothing suggestions (2 sentences max)
+- **Activity Ideas**: Indoor/outdoor activities based on forecast
+- **Schedule Builder**: Auto-creates detailed daily plans with times
+
+### Interactive Schedule Editor
+
+- Drag-and-drop row and column reordering
+- AI-powered field editing with loading states
+- Visual feedback for editing and drag operations
+- Pre-loaded with weather, outfit, and images when created by AI
+
+## 🔑 API Keys Required
+
+### WeatherAPI.com (Required)
+
+- **Cost**: Free tier (1 million calls/month)
+- **Signup**: https://www.weatherapi.com/
+- **Documentation**: https://www.weatherapi.com/docs/
+- **Features**: Current weather, 10-day forecast, hourly data, alerts
+
+### OpenAI API (Required)
+
+- **Cost**: Pay-as-you-go (~$0.01 per chat message)
+- **Signup**: https://platform.openai.com/
+- **Model**: gpt-4o-mini (fast and affordable)
+
+### Unsplash API (Optional)
+
+- **Cost**: Free tier (50 requests/hour)
+- **Signup**: https://unsplash.com/developers
+- **Used for**: Outfit suggestion images
+
+## 📚 Documentation
+
+- **[WEATHERAPI_SETUP.md](./WEATHERAPI_SETUP.md)** - WeatherAPI.com configuration and troubleshooting
+- **[COPILOTINSTRUCTIONS.md](./COPILOTINSTRUCTIONS.md)** - Development guidelines and coding standards
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+```bash
+npm run build
+vercel deploy
+```
+
+**Important**: Add your environment variables in Vercel dashboard:
+
+- `VITE_OPENAI_API_KEY`
+- `VITE_WEATHERAPI_KEY`
+- `VITE_UNSPLASH_KEY` (optional)
+
+### Netlify
+
+```bash
+npm run build
+netlify deploy --prod --dir=dist
+```
+
+Add environment variables in Netlify Site Settings > Build & Deploy > Environment.
+
+## 🐛 Troubleshooting
+
+### Weather not loading?
+
+- Check browser console (F12) for API errors
+- Verify WeatherAPI.com key is correct and in `.env.local`
+- Try a major city name (e.g., "London", "Tokyo")
+
+### AI responses are slow?
+
+- OpenAI API might be under load
+- Check your API key has sufficient credits
+- Weather context fetching might be slow (check network tab)
+
+### Outfit images not showing?
+
+- Falls back to generic image if Unsplash API not configured
+- Add `VITE_UNSPLASH_KEY` to `.env.local` for custom images
+- Check browser console for image fetch errors
+
+## 🎯 Future Enhancements
+
+- User accounts and saved preferences
+- Multiple schedule management
 - Weather alerts and notifications
+- Dark/light mode toggle
+- Map-based location selection
+- Historical weather analysis
+- Social sharing of schedules
 
 ## 👥 Team & Collaboration
 
 **Team Stratus: StormStream**
 
-This project was built collaboratively to strengthen teamwork, coding practice, and presentation skills. Each member contributed to UI design, component logic, and debugging.
+This project demonstrates collaborative development with:
 
-## 🚀 Getting Started
-
-### Clone the repository:
-```bash
-git clone https://github.com/your-username/StratusSphere.git
-cd StratusSphere
-```
-
-### Install dependencies:
-```bash
-npm install
-```
-
-### Start the development server:
-```bash
-npm start
-```
-
-### Open in browser:
-Visit `http://localhost:3000`
-
-## 📋 Development Guidelines
-
-Refer to [COPILOTINSTRUCTIONS.md](./COPILOTINSTRUCTIONS.md) for:
-
-- React best practices and Hooks usage
-- Naming conventions (PascalCase, camelCase, ALL_CAPS)
-- Error handling and API integration patterns
-- Code quality and testing standards
-- Styling organization and responsive design
-
-## 🎨 Coding Standards
-
-- **Components**: Use functional components with React Hooks
-- **State**: Manage with `useState`, `useContext`, and custom hooks
-- **API Calls**: Use `async/await` with proper error handling
-- **Styling**: CSS modules or component-specific CSS files
-- **Comments**: Add inline comments for complex logic; remove console.log() before committing
-- **File Names**: PascalCase for components, camelCase for utilities
+- Responsive component architecture
+- Seamless API integration
+- Interactive UI/UX design
+- Comprehensive error handling
 
 ---
 
 **Happy coding! Let's make StratusSphere shine! 🌟**
-=======
-☁️ StratusSphere
-
-Real-Time Weather, Reimagined.
-
-StratusSphere is a responsive and visually engaging weather web application built to make climate data feel dynamic, personal, and accessible. It provides accurate forecasts, smooth transitions, and interactive visuals that adapt to user input and changing weather conditions. Designed for both clarity and immersion, StratusSphere transforms traditional weather tracking into an experience that blends information with atmosphere.
-
-🌦️ Features
-
-Real-Time Weather Data: Displays up-to-date conditions powered by reliable weather APIs.
-
-Interactive Search: Users can look up weather details by city, with instant updates on temperature, conditions, and forecasts.
-
-Dynamic Icons & Backgrounds: Visuals adjust based on weather type (sunny, cloudy, rainy, etc.) for an immersive experience.
-
-Responsive Design: Optimized for desktop and mobile, ensuring seamless performance across devices.
-
-Smooth UI Experience: Intuitive layouts and animated hover effects enhance usability and presentation flow.
-
-🧠 Project Goals
-
-StratusSphere was developed to:
-
-Explore the integration of front-end design with live APIs.
-
-Demonstrate React-based interactivity and state management.
-
-Deliver an app experience that’s both functional and visually appealing.
-
-Encourage collaborative problem-solving in a real-world development setting.
-
-🧩 Tech Stack
-
-Frontend Framework: React.js
-
-Styling: Tailwind CSS
-
-Data Source: OpenWeatherMap API (or your team’s chosen API)
-
-Version Control: GitHub / Git
-
-Deployment: (e.g., Vercel or Netlify — add your platform)
-
-🖼️ UI Overview
-
-The interface features:
-
-A central weather display showing current temperature, condition, and location.
-
-A search bar for quick city lookups.
-
-Weather cards with animated hover states for an engaging presentation.
-
-Color palettes inspired by natural sky gradients and storm tones for visual storytelling.
-
-💡 Future Enhancements
-
-Multi-day forecasts with visual trend graphs.
-
-Dark/light mode toggle.
-
-User location detection for instant local weather.
-
-Integration of historical data and seasonal patterns.
-
-👥 Team & Collaboration
-
-Team Stratus: StormStream
-This project was built collaboratively to strengthen teamwork, coding practice, and presentation skills. Each member contributed to UI design, component logic, and debugging.
-
-🚀 Getting Started
-
-Clone the repository:
-
-git clone https://github.com/your-username/StratusSphere.git
-cd StratusSphere
-
-
-Install dependencies:
-
-npm install
-
-
-Start the development server:
-
-npm start
-
-
-Open in browser:
-Visit http://localhost:3000
->>>>>>> ff06f3dd950f97e68ef485c91987d3cc4bafbcfd

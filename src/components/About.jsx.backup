@@ -1,0 +1,416 @@
+import React from "react";
+
+function About({ onClose, isWelcome = false }) {
+  return (
+    <div className="about-overlay">
+      <div className="about-container">
+        <div className="about-header">
+          <h1 className="about-title">
+            <span className="glow-icon">☁️</span> StratusSphere
+          </h1>
+          {!isWelcome && (
+            <button className="about-close-btn" onClick={onClose}>×</button>
+          )}
+        </div>
+
+        <div className="about-content">
+          <div className="about-hero">
+            <div className="about-intro">
+              <p className="about-subtitle">
+                Chasing storms. Perfecting precision. ⚡
+              </p>
+              <p className="about-description">
+                {isWelcome 
+                  ? "Welcome to your intelligent weather companion! StratusSphere goes beyond simple forecasts to help you plan, prepare, and optimize your daily activities based on real-time weather conditions."
+                  : "Your intelligent weather companion that goes beyond simple forecasts to help you plan, prepare, and optimize your daily activities based on real-time weather conditions."
+                }
+              </p>
+            </div>
+          </div>
+
+          <div className="features-overview">
+            <h3 className="section-title">✨ Features & What Makes Us Unique</h3>
+            
+            <div className="features-grid">
+              <div className="feature-card unique-feature">
+                <div className="feature-icon">🌤️</div>
+                <h4>Storm AI Assistant</h4>
+                <p>The only weather service with a fully integrated AI planning assistant powered by GPT-4. Get personalized schedules, outfit recommendations, and activity suggestions tailored to your location.</p>
+                <div className="unique-badge">🎯 Unique to StratusSphere</div>
+              </div>
+
+              <div className="feature-card unique-feature">
+                <div className="feature-icon">🎛️</div>
+                <h4>Draggable Interface</h4>
+                <p>Revolutionary customizable UI that adapts to your workflow. Drag, resize, and position the chat interface anywhere on your screen with complete control.</p>
+                <div className="unique-badge">🎯 Unique to StratusSphere</div>
+              </div>
+
+              <div className="feature-card unique-feature">
+                <div className="feature-icon">📅</div>
+                <h4>Smart Scheduling</h4>
+                <p>Automatically generates and manages weather-based daily plans with full editing capabilities. Export to CSV or print your optimized schedules.</p>
+                <div className="unique-badge">🎯 Unique to StratusSphere</div>
+              </div>
+
+              <div className="feature-card standard-feature">
+                <div className="feature-icon">📊</div>
+                <h4>Interactive Visualizations</h4>
+                <p>Custom-built interactive charts with hourly temperature tracking, weather icons, and dynamic hover effects for detailed weather insights.</p>
+              </div>
+
+              <div className="feature-card standard-feature">
+                <div className="feature-icon">🌍</div>
+                <h4>Real-Time Weather Data</h4>
+                <p>Powered by Open-Meteo API for accurate, up-to-date global weather information with comprehensive 7-day forecasts and hourly tracking.</p>
+              </div>
+
+              <div className="feature-card standard-feature">
+                <div className="feature-icon">📱</div>
+                <h4>Modern Design</h4>
+                <p>Beautiful glassmorphism interface with responsive design, dark theme optimization, and accessibility-focused features across all devices.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="comparison-section">
+            <h3>⚡ How StratusSphere Compares</h3>
+            <p className="comparison-intro">
+              See how StratusSphere stacks up against other popular weather services:
+            </p>
+            
+            <div className="comparison-table-wrapper">
+              <table className="comparison-table">
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th className="stratussphere-col">StratusSphere</th>
+                    <th>Weather.com</th>
+                    <th>AccuWeather</th>
+                    <th>WeatherUnderground</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="feature-name">AI-Powered Personal Assistant</td>
+                    <td className="stratussphere-col">✅ Storm AI with GPT-4</td>
+                    <td>❌ Basic chatbot</td>
+                    <td>❌ No AI assistant</td>
+                    <td>❌ No AI features</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Smart Schedule Planning</td>
+                    <td className="stratussphere-col">✅ Auto-generated & editable</td>
+                    <td>❌ Manual planning only</td>
+                    <td>❌ No schedule features</td>
+                    <td>❌ No planning tools</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Interactive Weather Charts</td>
+                    <td className="stratussphere-col">✅ Custom HTML5 Canvas charts</td>
+                    <td>✅ Basic charts</td>
+                    <td>✅ Standard graphs</td>
+                    <td>✅ Simple visualizations</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Outfit Recommendations</td>
+                    <td className="stratussphere-col">✅ AI-powered suggestions</td>
+                    <td>❌ Generic tips only</td>
+                    <td>✅ Basic recommendations</td>
+                    <td>❌ No outfit features</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Draggable Interface</td>
+                    <td className="stratussphere-col">✅ Fully customizable UI</td>
+                    <td>❌ Fixed layout</td>
+                    <td>❌ Static interface</td>
+                    <td>❌ Traditional layout</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Schedule Export/Print</td>
+                    <td className="stratussphere-col">✅ CSV & Print support</td>
+                    <td>❌ No export features</td>
+                    <td>❌ Limited sharing</td>
+                    <td>❌ No export options</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Real-time Weather Data</td>
+                    <td className="stratussphere-col">✅ Open-Meteo API</td>
+                    <td>✅ Proprietary data</td>
+                    <td>✅ AccuWeather data</td>
+                    <td>✅ Community + professional</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Mobile Responsive</td>
+                    <td className="stratussphere-col">✅ Mobile-first design</td>
+                    <td>✅ Mobile app available</td>
+                    <td>✅ Mobile optimized</td>
+                    <td>✅ Responsive design</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Activity Suggestions</td>
+                    <td className="stratussphere-col">✅ AI-powered recommendations</td>
+                    <td>❌ Basic weather info only</td>
+                    <td>❌ Limited activity features</td>
+                    <td>❌ No activity planning</td>
+                  </tr>
+                  <tr>
+                    <td className="feature-name">Personalized Experience</td>
+                    <td className="stratussphere-col">✅ Fully customizable & intelligent</td>
+                    <td>⚠️ Limited personalization</td>
+                    <td>⚠️ Basic customization</td>
+                    <td>⚠️ Some personal features</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="about-tech">
+            <h3>🔧 Technology Stack</h3>
+            <div className="tech-grid">
+              <span className="tech-badge">React 18</span>
+              <span className="tech-badge">Vite</span>
+              <span className="tech-badge">HTML5 Canvas</span>
+              <span className="tech-badge">CSS3</span>
+              <span className="tech-badge">OpenAI GPT-4</span>
+              <span className="tech-badge">Open-Meteo API</span>
+              <span className="tech-badge">JavaScript ES6+</span>
+            </div>
+          </div>
+
+          <div className="about-footer">
+            <p>Built with ❤️ for weather enthusiasts and productivity seekers everywhere.</p>
+            <p className="version-info">Version 1.0.0 | Last updated: November 2025</p>
+            {isWelcome && (
+              <div className="welcome-actions">
+                <button className="get-started-btn" onClick={onClose}>
+                  Get Started with StratusSphere
+                </button>
+                <p className="welcome-note">
+                  Ready to experience intelligent weather planning? Click above to launch the app!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default About;              <div className="about-content">
+                  <div className="about-hero">
+                      <div className="about-intro">
+                          <p className="about-subtitle">
+                              Chasing storms. Perfecting precision. ⚡
+                          </p>
+                          <p className="about-description">
+                              {isWelcome
+                                  ? "Welcome to your intelligent weather companion! StratusSphere goes beyond simple forecasts to help you plan, prepare, and optimize your daily activities based on real-time weather conditions."
+                                  : "Your intelligent weather companion that goes beyond simple forecasts to help you plan, prepare, and optimize your daily activities based on real-time weather conditions."}
+                          </p>
+                      </div>
+                  </div>
+
+                  <div className="features-overview">
+                      <div className="key-features">
+                          <h3 className="section-title">✨ Features & What Makes Us Unique</h3>
+
+                          <div className="features-grid">
+                              <div className="feature-card unique-feature">
+                                  <div className="feature-icon">🌤️</div>
+                                  <h4>Storm AI Assistant</h4>
+                                  <p>The only weather service with a fully integrated AI planning assistant powered by GPT-4. Get personalized schedules, outfit recommendations, and activity suggestions tailored to your location.</p>
+                                  <div className="unique-badge">🎯 Unique to StratusSphere</div>
+                              </div>
+
+                              <div className="feature-card standard-feature">
+                                  <div className="feature-icon">📊</div>
+                                  <h4>Interactive Visualizations</h4>
+                                  <p>Custom-built interactive charts with hourly temperature tracking, weather icons, and dynamic hover effects for detailed weather insights.</p>
+                              </div>
+
+                              <div className="feature-card unique-feature">
+                                  <div className="feature-icon">🎛️</div>
+                                  <h4>Draggable Interface</h4>
+                                  <p>Revolutionary customizable UI that adapts to your workflow. Drag, resize, and position the chat interface anywhere on your screen with complete control.</p>
+                                  <div className="unique-badge">🎯 Unique to StratusSphere</div>
+                              </div>
+
+                              <div className="feature-card unique-feature">
+                                  <div className="feature-icon">📅</div>
+                                  <h4>Smart Scheduling</h4>
+                                  <p>Automatically generates and manages weather-based daily plans with full editing capabilities. Export to CSV or print your optimized schedules.</p>
+                                  <div className="unique-badge">🎯 Unique to StratusSphere</div>
+                              </div>
+
+                              <div className="feature-card standard-feature">
+                                  <div className="feature-icon">🌍</div>
+                                  <h4>Real-Time Weather Data</h4>
+                                  <p>Powered by Open-Meteo API for accurate, up-to-date global weather information with comprehensive 7-day forecasts and hourly tracking.</p>
+                              </div>
+
+                              <div className="feature-card standard-feature">
+                                  <div className="feature-icon">📱</div>
+                                  <h4>Modern Design</h4>
+                                  <p>Beautiful glassmorphism interface with responsive design, dark theme optimization, and accessibility-focused features across all devices.</p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div className="unique-feature-card">
+                      <div className="unique-icon">🤖</div>
+                      <div className="unique-content">
+                          <h4>Storm AI Assistant</h4>
+                          <p>The only weather service with a fully integrated AI planning assistant powered by GPT-4</p>
+                      </div>
+                  </div>
+                  <div className="unique-feature-card">
+                      <div className="unique-icon">�️</div>
+                      <div className="unique-content">
+                          <h4>Draggable Interface</h4>
+                          <p>Revolutionary customizable UI that adapts to your workflow and positioning preferences</p>
+                      </div>
+                  </div>
+                  <div className="unique-feature-card">
+                      <div className="unique-icon">📋</div>
+                      <div className="unique-content">
+                          <h4>Smart Scheduling</h4>
+                          <p>Automatically generates and manages weather-based daily plans with editing capabilities</p>
+                      </div>
+                  </div>
+                  <div className="unique-feature-card">
+                      <div className="unique-icon">🎨</div>
+                      <div className="unique-content">
+                          <h4>Modern Experience</h4>
+                          <p>Beautiful, accessible interface built with cutting-edge web technologies</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div><div className="comparison-section">
+              <h3>⚡ How StratusSphere Compares</h3>
+              <p className="comparison-intro">
+                  See how StratusSphere stacks up against other popular weather services:
+              </p>
+
+              <div className="comparison-table-wrapper">
+                  <table className="comparison-table">
+                      <thead>
+                          <tr>
+                              <th>Feature</th>
+                              <th className="stratussphere-col">StratusSphere</th>
+                              <th>Weather.com</th>
+                              <th>AccuWeather</th>
+                              <th>WeatherUnderground</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr>
+                              <td className="feature-name">AI-Powered Personal Assistant</td>
+                              <td className="stratussphere-col">✅ Storm AI with GPT-4</td>
+                              <td>❌ Basic chatbot</td>
+                              <td>❌ No AI assistant</td>
+                              <td>❌ No AI features</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Smart Schedule Planning</td>
+                              <td className="stratussphere-col">✅ Auto-generated & editable</td>
+                              <td>❌ Manual planning only</td>
+                              <td>❌ No schedule features</td>
+                              <td>❌ No planning tools</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Interactive Weather Charts</td>
+                              <td className="stratussphere-col">✅ Custom HTML5 Canvas charts</td>
+                              <td>✅ Basic charts</td>
+                              <td>✅ Standard graphs</td>
+                              <td>✅ Simple visualizations</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Outfit Recommendations</td>
+                              <td className="stratussphere-col">✅ AI-powered suggestions</td>
+                              <td>❌ Generic tips only</td>
+                              <td>✅ Basic recommendations</td>
+                              <td>❌ No outfit features</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Draggable Interface</td>
+                              <td className="stratussphere-col">✅ Fully customizable UI</td>
+                              <td>❌ Fixed layout</td>
+                              <td>❌ Static interface</td>
+                              <td>❌ Traditional layout</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Schedule Export/Print</td>
+                              <td className="stratussphere-col">✅ CSV & Print support</td>
+                              <td>❌ No export features</td>
+                              <td>❌ Limited sharing</td>
+                              <td>❌ No export options</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Real-time Weather Data</td>
+                              <td className="stratussphere-col">✅ Open-Meteo API</td>
+                              <td>✅ Proprietary data</td>
+                              <td>✅ AccuWeather data</td>
+                              <td>✅ Community + professional</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Mobile Responsive</td>
+                              <td className="stratussphere-col">✅ Mobile-first design</td>
+                              <td>✅ Mobile app available</td>
+                              <td>✅ Mobile optimized</td>
+                              <td>✅ Responsive design</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Activity Suggestions</td>
+                              <td className="stratussphere-col">✅ AI-powered recommendations</td>
+                              <td>❌ Basic weather info only</td>
+                              <td>❌ Limited activity features</td>
+                              <td>❌ No activity planning</td>
+                          </tr>
+                          <tr>
+                              <td className="feature-name">Personalized Experience</td>
+                              <td className="stratussphere-col">✅ Fully customizable & intelligent</td>
+                              <td>⚠️ Limited personalization</td>
+                              <td>⚠️ Basic customization</td>
+                              <td>⚠️ Some personal features</td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div><div className="about-tech">
+              <h3>🔧 Technology Stack</h3>
+              <div className="tech-grid">
+                  <span className="tech-badge">React 18</span>
+                  <span className="tech-badge">Vite</span>
+                  <span className="tech-badge">HTML5 Canvas</span>
+                  <span className="tech-badge">CSS3</span>
+                  <span className="tech-badge">OpenAI GPT-4</span>
+                  <span className="tech-badge">Open-Meteo API</span>
+                  <span className="tech-badge">JavaScript ES6+</span>
+              </div>
+          </div><div className="about-footer">
+              <p>Built with ❤️ for weather enthusiasts and productivity seekers everywhere.</p>
+              <p className="version-info">Version 1.0.0 | Last updated: November 2025</p>
+
+              {isWelcome && (
+                  <div className="welcome-actions">
+                      <button className="get-started-btn" onClick={onClose}>
+                          🚀 Get Started - Enter StratusSphere
+                      </button>
+                      <p className="welcome-note">
+                          Ready to experience intelligent weather planning? Click above to launch the app!
+                      </p>
+                  </div>
+                  )}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+}
+
+export default About;

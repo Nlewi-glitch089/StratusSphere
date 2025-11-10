@@ -2,166 +2,158 @@ import React from 'react';
 
 /**
  * Utility to handle OpenAI chat integration for weather queries
- * OpenAI provides context, real-time weather API provides live data
+ * WeatherAPI.com provides real-time weather data and forecasts
+ * ChatGPT handles outfit suggestions, activity recommendations, and scheduling
  */
 
 /**
- * Fetch REAL-TIME weather data using Open-Meteo (free, no API key needed)
+ * Fetch REAL-TIME weather data and forecast using WeatherAPI.com
+ * Free tier: 1 million API calls/month, 10-day forecast, hourly data
  */
-async function fetchRealTimeWeather(city) {
+async function fetchWeatherFromWeatherAPI(city) {
   try {
-    console.log(`Starting weather fetch for: "${city}"`);
-    
     // Geocode the city to get coordinates
-    const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=5&language=en&format=json`;
-    console.log(`Geocoding URL: ${geoUrl}`);
-    
-    const geoResponse = await fetch(geoUrl);
+    const geoResponse = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`
+    );
     const geoData = await geoResponse.json();
 
-    console.log(`Geocoding results:`, geoData);
-
     if (!geoData.results || geoData.results.length === 0) {
-      console.warn(`❌ City not found: ${city}`);
+      console.warn(`City not found: ${city}`);
       return null;
     }
 
-    // Use the first result (most relevant)
-    const location = geoData.results[0];
-    const { latitude, longitude, name, country, admin1, admin2 } = location;
-    
-    console.log(`✅ Found: ${name}, ${admin1 || admin2 || ""} ${country} (${latitude}, ${longitude})`);
+    const { latitude, longitude, name, country, admin1 } = geoData.results[0];
+    console.log(`Found: ${name}, ${admin1}, ${country} (${latitude}, ${longitude})`);
 
-<<<<<<< HEAD
-    // Fetch real-time weather for the coordinates
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&forecast_days=7&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`;
-    
-    console.log(`Weather URL: ${weatherUrl}`);
-    
-    const weatherResponse = await fetch(weatherUrl);
-=======
-    // Fetch real-time weather for the coordinates with more detailed hourly data
+    // Fetch real-time weather with comprehensive current conditions and detailed forecast
     const weatherResponse = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&forecast_days=7&hourly=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto&timeformat=iso8601`
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,weather_code,is_day,cloud_cover,pressure_msl,apparent_temperature,precipitation&forecast_days=7&hourly=temperature_2m,weather_code,relative_humidity_2m,wind_speed_10m,precipitation,weather_code,cloud_cover&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max&timezone=auto&timeformat=iso8601`
     );
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f
 
     if (!weatherResponse.ok) {
-      console.warn(`❌ Open-Meteo API error: ${weatherResponse.status}`);
+      console.warn("Open-Meteo API error");
       return null;
     }
 
     const weatherData = await weatherResponse.json();
-<<<<<<< HEAD
-    console.log(`✅ Real-time weather data:`, weatherData);
-=======
     console.log("Real-time weather data:", weatherData);
     console.log("Hourly times sample:", weatherData.hourly.time.slice(0, 5));
     console.log("Daily times:", weatherData.daily.time);
 
-    // Validate that we have the expected data structure
-    if (!weatherData.hourly || !weatherData.hourly.time || !weatherData.daily || !weatherData.daily.time) {
-      console.error("Invalid weather data structure:", weatherData);
-      return null;
+    // Validate we have the expected data structure from Open-Meteo
+    if (!weatherData.current || !weatherData.hourly || !weatherData.daily) {
+      throw new Error("Invalid weather data structure from Open-Meteo API");
     }
 
     console.log(`Processing weather data for ${name}: ${weatherData.hourly.time.length} hourly points, ${weatherData.daily.time.length} daily points`);
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f
+
+    // Helper function to get weather description and emoji from weather code
+    const getWeatherInfo = (weatherCode) => {
+      const weatherMap = {
+        0: { text: "Clear sky", emoji: "☀️" },
+        1: { text: "Mainly clear", emoji: "🌤️" },
+        2: { text: "Partly cloudy", emoji: "⛅" },
+        3: { text: "Overcast", emoji: "☁️" },
+        45: { text: "Foggy", emoji: "🌫️" },
+        48: { text: "Foggy", emoji: "🌫️" },
+        51: { text: "Light drizzle", emoji: "🌦️" },
+        53: { text: "Moderate drizzle", emoji: "🌦️" },
+        55: { text: "Dense drizzle", emoji: "🌧️" },
+        61: { text: "Slight rain", emoji: "🌦️" },
+        63: { text: "Moderate rain", emoji: "🌧️" },
+        65: { text: "Heavy rain", emoji: "⛈️" },
+        71: { text: "Slight snow", emoji: "🌨️" },
+        73: { text: "Moderate snow", emoji: "❄️" },
+        75: { text: "Heavy snow", emoji: "❄️" },
+        80: { text: "Slight rain showers", emoji: "🌦️" },
+        81: { text: "Moderate rain showers", emoji: "🌧️" },
+        82: { text: "Violent rain showers", emoji: "⛈️" },
+        85: { text: "Slight snow showers", emoji: "🌨️" },
+        86: { text: "Heavy snow showers", emoji: "❄️" },
+        95: { text: "Thunderstorm", emoji: "⛈️" },
+        96: { text: "Thunderstorm with hail", emoji: "⛈️" },
+        99: { text: "Thunderstorm with hail", emoji: "⛈️" },
+      };
+      return weatherMap[weatherCode] || { text: "Unknown", emoji: "🌤️" };
+    };
 
     return {
-      location: { name, region: admin1 || admin2, country, latitude, longitude },
+      location: { name, region: admin1, country, latitude, longitude },
       current: {
         temp_c: weatherData.current.temperature_2m,
         temp_f: Math.round(weatherData.current.temperature_2m * 9/5 + 32),
         humidity: weatherData.current.relative_humidity_2m,
-        wind_kph: Math.round(weatherData.current.wind_speed_10m * 100) / 100,
-        feelslike_c: Math.round(weatherData.current.temperature_2m - (weatherData.current.wind_speed_10m / 10)),
-        condition: {
-          text: getWeatherCondition(weatherData.current.weather_code),
-          icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
-        },
+        wind_kph: weatherData.current.wind_speed_10m,
+        wind_degree: weatherData.current.wind_direction_10m,
+        feelslike_c: weatherData.current.apparent_temperature,
+        feelslike_f: Math.round(weatherData.current.apparent_temperature * 9/5 + 32),
+        is_day: weatherData.current.is_day,
+        cloud_cover: weatherData.current.cloud_cover,
+        pressure_mb: weatherData.current.pressure_msl,
+        precip_mm: weatherData.current.precipitation,
+        condition: (() => {
+          const info = getWeatherInfo(weatherData.current.weather_code);
+          return {
+            text: info.text,
+            icon: info.emoji,
+            code: weatherData.current.weather_code,
+          };
+        })(),
       },
       forecast: {
-        forecastday: weatherData.daily.time.map((date, idx) => {
-          // Get all hourly data for this specific date
-          const dailyHourlyData = [];
-          
-          for (let hourIdx = 0; hourIdx < weatherData.hourly.time.length; hourIdx++) {
-            const hourlyTime = weatherData.hourly.time[hourIdx];
-            const hourlyDate = hourlyTime.split('T')[0]; // Extract YYYY-MM-DD
-            
-            if (hourlyDate === date) {
-              dailyHourlyData.push({
-                time: hourlyTime,
+        forecastday: weatherData.daily.time.map((date, idx) => ({
+          date: date,
+          day: {
+            maxtemp_c: weatherData.daily.temperature_2m_max[idx],
+            mintemp_c: weatherData.daily.temperature_2m_min[idx],
+            avgtemp_c: (weatherData.daily.temperature_2m_max[idx] + weatherData.daily.temperature_2m_min[idx]) / 2,
+            avghumidity: 0,
+            precip_mm: weatherData.daily.precipitation_sum[idx],
+            wind_kph_max: weatherData.daily.wind_speed_10m_max[idx],
+            condition: (() => {
+              const info = getWeatherInfo(weatherData.daily.weather_code[idx]);
+              return {
+                text: info.text,
+                icon: info.emoji,
+                code: weatherData.daily.weather_code[idx],
+              };
+            })(),
+            daily_chance_of_rain: 0,
+            daily_chance_of_snow: 0,
+          },
+          // Hourly data for each day
+          hour: weatherData.hourly.time
+            .map((time, hourIdx) => {
+              // Check if this hour belongs to this day
+              if (!time.startsWith(date)) return null;
+              
+              return {
+                time: time,
                 temp_c: weatherData.hourly.temperature_2m[hourIdx],
-                humidity: weatherData.hourly.relative_humidity_2m ? weatherData.hourly.relative_humidity_2m[hourIdx] : null,
-                wind_kph: weatherData.hourly.wind_speed_10m ? weatherData.hourly.wind_speed_10m[hourIdx] : null,
-                condition: {
-                  text: getWeatherCondition(weatherData.hourly.weather_code[hourIdx]),
-                  icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
-                },
-              });
-            }
-          }
-          
-          console.log(`Day ${idx} (${date}): ${dailyHourlyData.length} hourly points`);
-          if (dailyHourlyData.length > 0) {
-            console.log(`  First hour: ${dailyHourlyData[0].time}, ${dailyHourlyData[0].temp_c}°C, ${dailyHourlyData[0].condition.text}`);
-            console.log(`  Last hour: ${dailyHourlyData[dailyHourlyData.length-1].time}, ${dailyHourlyData[dailyHourlyData.length-1].temp_c}°C, ${dailyHourlyData[dailyHourlyData.length-1].condition.text}`);
-          }
-
-          return {
-            date,
-            day: {
-              maxtemp_c: weatherData.daily.temperature_2m_max[idx],
-              mintemp_c: weatherData.daily.temperature_2m_min[idx],
-              condition: {
-                text: getWeatherCondition(weatherData.daily.weather_code[idx]),
-                icon: "//cdn.weatherapi.com/weather/128x128/day/302.png",
-              },
-            },
-            hour: dailyHourlyData,
-          };
-        }),
+                temp_f: Math.round(weatherData.hourly.temperature_2m[hourIdx] * 9/5 + 32),
+                humidity: weatherData.hourly.relative_humidity_2m[hourIdx],
+                wind_kph: weatherData.hourly.wind_speed_10m[hourIdx],
+                condition: (() => {
+                  const info = getWeatherInfo(weatherData.hourly.weather_code[hourIdx]);
+                  return {
+                    text: info.text,
+                    icon: info.emoji,
+                    code: weatherData.hourly.weather_code[hourIdx],
+                  };
+                })(),
+                chance_of_rain: 0,
+                chance_of_snow: 0,
+              };
+            })
+            .filter(Boolean),
+        })),
       },
     };
   } catch (error) {
-    console.error(`❌ Error fetching real-time weather:`, error);
+    console.error("Error fetching real-time weather:", error);
     return null;
   }
-}
-
-/**
- * Convert WMO weather code to readable condition
- */
-function getWeatherCondition(code) {
-  const conditions = {
-    0: "Clear sky",
-    1: "Mainly clear",
-    2: "Partly cloudy",
-    3: "Overcast",
-    45: "Foggy",
-    48: "Depositing rime fog",
-    51: "Light drizzle",
-    53: "Moderate drizzle",
-    55: "Dense drizzle",
-    61: "Slight rain",
-    63: "Moderate rain",
-    65: "Heavy rain",
-    71: "Slight snow",
-    73: "Moderate snow",
-    75: "Heavy snow",
-    77: "Snow grains",
-    80: "Slight rain showers",
-    81: "Moderate rain showers",
-    82: "Violent rain showers",
-    85: "Slight snow showers",
-    86: "Heavy snow showers",
-    95: "Thunderstorm",
-    96: "Thunderstorm with slight hail",
-    99: "Thunderstorm with heavy hail",
-  };
-  return conditions[code] || "Unknown";
 }
 
 /**
@@ -185,7 +177,7 @@ export async function sendChatMessage(userMessage, conversationHistory) {
     if (city) {
       try {
         console.log(`Fetching real-time weather for: ${city}`);
-        const realWeather = await fetchRealTimeWeather(city);
+        const realWeather = await fetchWeatherFromWeatherAPI(city);
         if (realWeather) {
           console.log(`Successfully fetched weather for: ${realWeather.location.name}`);
           weatherContext = `
@@ -218,13 +210,34 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
         messages: [
           {
             role: "system",
-            content: `You are Storm, a helpful and friendly weather assistant. ${weatherContext ? "You have been provided with REAL-TIME weather data. Use this accurate current data in your response." : "Provide helpful weather information based on typical climate patterns."} Be conversational, accurate, and engaging. If you have real-time data, reference it specifically.${weatherContext ? "\n" + weatherContext : ""}`,
+            content: `You are Storm, a personal weather and activity assistant chatbot! 🌤️ You help users plan their day based on weather conditions by:
+
+🗓️ **Building personalized schedules** - Create detailed daily plans based on weather and user preferences
+👔 **Recommending outfits** - Suggest appropriate clothing for the weather conditions
+🎯 **Activity suggestions** - Recommend indoor/outdoor activities based on weather
+📍 **Location-specific advice** - Provide hyper-local recommendations
+
+${weatherContext ? "You have REAL-TIME weather data. Use this accurate current data in your responses." : "Use typical weather patterns for your area."}
+
+**Response Format:**
+- Use emojis to make responses engaging (🌟, ⛅, 🧥, 🏃‍♂️, etc.)
+- Structure responses with clear sections when building schedules
+- Be conversational and friendly
+- Ask follow-up questions to personalize recommendations
+- Include specific times for activities when building schedules
+
+**Example interactions:**
+- "Plan my day" → Create a full schedule with activities
+- "What should I wear?" → Outfit recommendations with reasons
+- "Activities for today?" → Weather-appropriate activity suggestions
+
+${weatherContext ? "\n" + weatherContext : ""}`,
           },
           ...conversationHistory,
           { role: "user", content: userMessage },
         ],
-        temperature: 0.7,
-        max_tokens: 500,
+        temperature: 0.8,
+        max_tokens: 600,
       }),
     });
 
@@ -247,18 +260,62 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
  * Extract city/location name from user message (supports city names and ZIP codes)
  */
 function extractCityName(message) {
-<<<<<<< HEAD
   const msg = message.toLowerCase();
-  const weatherKeywords = ['weather', 'climate', 'forecast', 'temperature', 'conditions', 'rain', 'snow', 'hot', 'cold', 'is it', 'what', 'how'];
-=======
   console.log(`Extracting city from message: "${message}"`);
   
-  // Clean message
-  const msg = message.toLowerCase();
+  // Common city slang/nicknames mapping to full names
+  const citySlangMap = {
+    'philly': 'Philadelphia',
+    'phili': 'Philadelphia',
+    'ny': 'New York',
+    'nyc': 'New York',
+    'la': 'Los Angeles',
+    'sf': 'San Francisco',
+    'frisco': 'San Francisco',
+    'dc': 'Washington',
+    'chi': 'Chicago',
+    'chi-town': 'Chicago',
+    'atl': 'Atlanta',
+    'bos': 'Boston',
+    'dfw': 'Dallas',
+    'dtw': 'Detroit',
+    'mia': 'Miami',
+    'sea': 'Seattle',
+    'pdx': 'Portland',
+    'Vegas': 'Las Vegas',
+    'vegas': 'Las Vegas',
+    'sin city': 'Las Vegas',
+    'la': 'Los Angeles',
+    'sd': 'San Diego',
+    'mke': 'Milwaukee',
+    'phl': 'Philadelphia',
+    'hou': 'Houston',
+    'aus': 'Austin',
+    'den': 'Denver',
+    'phoenix': 'Phoenix',
+    'phoenix': 'Phoenix',
+    'phx': 'Phoenix',
+    'mpls': 'Minneapolis',
+    'stl': 'Saint Louis',
+    'nola': 'New Orleans',
+    'big apple': 'New York',
+    'windy city': 'Chicago',
+    'city of angels': 'Los Angeles',
+    'bean town': 'Boston',
+    'music city': 'Nashville',
+    'ptown': 'Portland',
+  };
+
+  // Check for slang first
+  for (const [slang, fullName] of Object.entries(citySlangMap)) {
+    if (msg.includes(slang.toLowerCase())) {
+      console.log(`Detected city slang: "${slang}" → "${fullName}"`);
+      return fullName;
+    }
+  }
 
   // Common weather-related keywords to avoid
   const weatherKeywords = ['weather', 'climate', 'forecast', 'temperature', 'conditions', 'rain', 'snow', 'hot', 'cold', 'is', 'it', 'what', 'how', 'the', 'today', 'tomorrow', 'now'];
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f
 
   // Strategy 0: Check for 5-digit ZIP codes
   const zipMatch = message.match(/\b(\d{5})\b/);
@@ -269,30 +326,6 @@ function extractCityName(message) {
 
   // Strategy 1: Direct patterns - improved and more comprehensive
   const directPatterns = [
-<<<<<<< HEAD
-    /(?:weather|forecast|climate|conditions?)\s+(?:in|for|at|near)\s+([A-Za-z\s]+?)(?:\s+(?:weather|forecast|climate|now|today|today's|is|has|\?|\.)|$)/i,
-    /in\s+([A-Za-z\s]+?)\s+(?:weather|forecast|climate|conditions?)/i,
-    /(?:weather|forecast|climate)\s+(?:in|for)\s+([A-Za-z\s]+?)[\?\.]?$/i,
-  ];
-
-    for (const pattern of directPatterns) {
-      const match = message.match(pattern);
-      if (match && match[1]) {
-        const city = match[1].trim();
-        if (city.length > 1 && !weatherKeywords.includes(city)) {
-          console.log(`🔍 Extracted city (direct pattern): ${city}`);
-          return city;
-        }
-      }
-    }
-  
-    // Strategy 2: Capitalized words (likely city names)
-    const words = message.split(/\s+/);
-    for (const word of words) {
-      if (word.match(/^[A-Z][a-z]+$/) && !weatherKeywords.includes(word.toLowerCase())) {
-        console.log(`🔍 Extracted city (capitalized word): ${word}`);
-        return word;
-=======
     // "weather in [City]", "forecast for [City]", etc.
     /(?:weather|forecast|climate|conditions?|temperature)\s+(?:in|for|at|near|of)\s+([A-Za-z][A-Za-z\s,.-]+?)(?:\s*[\?\.]?\s*$|\s+(?:weather|forecast|climate|today|tomorrow|now|is|please))/i,
     // "in [City] weather", "[City] weather"
@@ -335,16 +368,10 @@ function extractCityName(message) {
       if (city.length > 2 && !weatherKeywords.includes(city.toLowerCase())) {
         console.log(`Found proper noun city: "${city}"`);
         return city;
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f
       }
     }
-  
-    console.log(`❌ No city found in message`);
-    return null;
   }
 
-<<<<<<< HEAD
-=======
   // Strategy 3: If the message is mostly just a city name (fallback)
   const words = message.trim().split(/\s+/);
   if (words.length <= 3) {
@@ -364,7 +391,6 @@ function extractCityName(message) {
   return null;
 }
 
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f
 /**
  * Fetch real-time weather data for a city
  */
@@ -375,16 +401,14 @@ export async function getWeatherForCity(city) {
   }
 
   try {
-    console.log(`Fetching weather for: "${city}"`);
-    const weather = await fetchRealTimeWeather(city);
+    console.log(`Fetching weather for: "${city}" using WeatherAPI.com`);
+    const weather = await fetchWeatherFromWeatherAPI(city);
     return weather;
   } catch (error) {
     console.warn(`Could not fetch weather data for "${city}":`, error);
     return null;
   }
 }
-<<<<<<< HEAD
-=======
 
 /**
  * Enhanced sendChatMessage that allows manual city override
@@ -402,11 +426,11 @@ export async function sendChatMessageWithCity(userMessage, conversationHistory, 
     console.log(`Using city: "${city}" (override: ${!!overrideCity})`);
     let weatherContext = "";
 
-    // If a location is found, fetch REAL-TIME weather
+    // If a location is found, fetch REAL-TIME weather from WeatherAPI.com
     if (city) {
       try {
         console.log(`Fetching real-time weather for: ${city}`);
-        const realWeather = await fetchRealTimeWeather(city);
+        const realWeather = await fetchWeatherFromWeatherAPI(city);
         if (realWeather) {
           console.log(`Successfully fetched weather for: ${realWeather.location.name}`);
           weatherContext = `
@@ -434,13 +458,34 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
         messages: [
           {
             role: "system",
-            content: `You are Storm, a helpful and friendly weather assistant. ${weatherContext ? "You have been provided with REAL-TIME weather data. Use this accurate current data in your response." : "Provide helpful weather information based on typical climate patterns."} Be conversational, accurate, and engaging. If you have real-time data, reference it specifically.${weatherContext ? "\n" + weatherContext : ""}`,
+            content: `You are Storm, a personal weather and activity assistant chatbot! 🌤️ You help users plan their day based on weather conditions by:
+
+🗓️ **Building personalized schedules** - Create detailed daily plans based on weather and user preferences
+👔 **Recommending outfits** - Suggest appropriate clothing for the weather conditions
+🎯 **Activity suggestions** - Recommend indoor/outdoor activities based on weather
+📍 **Location-specific advice** - Provide hyper-local recommendations
+
+${weatherContext ? "You have REAL-TIME weather data. Use this accurate current data in your responses." : "Use typical weather patterns for your area."}
+
+**Response Format:**
+- Use emojis to make responses engaging (🌟, ⛅, 🧥, 🏃‍♂️, etc.)
+- Structure responses with clear sections when building schedules
+- Be conversational and friendly
+- Ask follow-up questions to personalize recommendations
+- Include specific times for activities when building schedules
+
+**Example interactions:**
+- "Plan my day" → Create a full schedule with activities
+- "What should I wear?" → Outfit recommendations with reasons
+- "Activities for today?" → Weather-appropriate activity suggestions
+
+${weatherContext ? "\n" + weatherContext : ""}`,
           },
           ...conversationHistory,
           { role: "user", content: userMessage },
         ],
-        temperature: 0.7,
-        max_tokens: 500,
+        temperature: 0.8,
+        max_tokens: 600,
       }),
     });
 
@@ -458,4 +503,3 @@ Feels like: ${Math.round(realWeather.current.feelslike_c)}°C
     throw error;
   }
 }
->>>>>>> 41c16a7b8a7b321944af2962e5a2c8fabb04226f

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Outer circle -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#f5e960" stroke-width="10"/>
+  
+  <!-- Cloud shape - adjusted right a bit -->
+  <path d="M35 105 
+           C35 95, 40 85, 50 85
+           C55 75, 65 70, 75 70
+           C80 60, 90 55, 100 55
+           C110 55, 120 60, 125 70
+           C135 70, 145 75, 150 85
+           C160 85, 165 95, 165 105
+           C165 115, 160 125, 150 125
+           L50 125
+           C40 125, 35 115, 35 105 Z" 
+        fill="#7a3ff2" stroke="#f5e960" stroke-width="3"/>
+</svg>

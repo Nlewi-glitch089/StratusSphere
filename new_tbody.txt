@@ -1,0 +1,7 @@
+            <tbody>
+              {schedule.map((item, rowIndex) => (
+                <tr key={rowIndex} className="schedule-table-row">
+                  {columnOrder.map((column) => renderTableCell(item, rowIndex, column))}
+                </tr>
+              ))}
+            </tbody>
