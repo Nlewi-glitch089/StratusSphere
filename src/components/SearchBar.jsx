@@ -22,12 +22,9 @@ function SearchBar({ onSendMessage, isLoading }) {
 	};
 
 	const handleSearch = async () => {
-		console.log("SearchBar button clicked, query:", query);
 		const trimmedQuery = query.trim();
 		if (!trimmedQuery) {
-			console.log("Empty query - showing chatbot");
 			// Just show the chatbot without sending a message
-			// We need to pass a callback to just toggle visibility
 			onSendMessage("");
 			return;
 		}
@@ -37,7 +34,6 @@ function SearchBar({ onSendMessage, isLoading }) {
 			? `What's the weather in ${trimmedQuery}?`
 			: trimmedQuery;
 
-		console.log("Sending message to parent:", messageToSend);
 		// Send query to parent (App) to handle OpenAI chat
 		onSendMessage(messageToSend);
 		setQuery("");

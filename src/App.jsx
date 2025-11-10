@@ -46,13 +46,9 @@ function App() {
 	const [outfitImages, setOutfitImages] = useState({});
 
 	const handleSendMessage = async (userMessage) => {
-		console.log("handleSendMessage called with:", userMessage);
-		console.log("Setting showChatBubble to true");
-
 		// Just show chatbot if empty message (button clicked but no text entered)
 		if (!userMessage.trim()) {
 			setShowChatBubble(true);
-			console.log("Empty message - just showing chatbot");
 			return;
 		}
 
