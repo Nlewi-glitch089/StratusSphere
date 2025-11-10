@@ -6,6 +6,9 @@ import ChatBubble from "./components/ChatBubble";
 import HourlyLineChart from "./components/HourlyLineChart";
 import About from "./components/About";
 import ScheduleTable from "./components/ScheduleTable";
+import Settings from "./components/Settings";
+import { TemperatureProvider } from "./context/TemperatureContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import {
 	sendChatMessage,
 	getWeatherForCity,
@@ -19,6 +22,7 @@ function App() {
 	const [showChatBubble, setShowChatBubble] = useState(false);
 	const [showDetails, setShowDetails] = useState(false);
 	const [showAbout, setShowAbout] = useState(true);
+	const [showSettings, setShowSettings] = useState(false);
 	const [showScheduleTable, setShowScheduleTable] = useState(false);
 	const [scheduleData, setScheduleData] = useState(null);
 	const [outfitImages, setOutfitImages] = useState({}); // Maps rowIndex to image URL
@@ -97,10 +101,82 @@ function App() {
 					setWeatherData(weather);
 					// Set default selected day to current day
 					if (weather.forecast && weather.forecast.forecastday) {
-						const currentDayIndex = findCurrentDayIndex(
+						// Try to extract date from user message
+						let targetDayIndex = findCurrentDayIndex(
 							weather.forecast.forecastday
 						);
-						setSelectedDay(currentDayIndex);
+
+						// Common date patterns in user messages
+						const messageLower = userMessage.toLowerCase();
+						const dayPatterns = {
+							tomorrow: 1,
+							"day after tomorrow": 2,
+							monday: 0,
+							tuesday: 1,
+							wednesday: 2,
+							thursday: 3,
+							friday: 4,
+							saturday: 5,
+							sunday: 6,
+							"next week": 7,
+						};
+
+						// Check for day names or common date references
+						for (const [pattern, offset] of Object.entries(dayPatterns)) {
+							if (messageLower.includes(pattern)) {
+								const potentialIndex =
+									pattern === "sunday" || pattern === "monday"
+										? offset
+										: findCurrentDayIndex(weather.forecast.forecastday) +
+											offset;
+								if (
+									potentialIndex >= 0 &&
+									potentialIndex < weather.forecast.forecastday.length
+								) {
+									targetDayIndex = potentialIndex;
+									break;
+								}
+							}
+						}
+
+						// Also try to match specific day of week if we're not already on that day
+						const todayIndex = findCurrentDayIndex(
+							weather.forecast.forecastday
+						);
+						if (
+							messageLower.includes("monday") ||
+							messageLower.includes("tuesday") ||
+							messageLower.includes("wednesday") ||
+							messageLower.includes("thursday") ||
+							messageLower.includes("friday") ||
+							messageLower.includes("saturday") ||
+							messageLower.includes("sunday")
+						) {
+							// Find the next occurrence of that day
+							for (let i = todayIndex; i < weather.forecast.forecastday.length; i++) {
+								const dayDate = new Date(
+									weather.forecast.forecastday[i].date
+								);
+								const dayName = dayDate
+									.toLocaleDateString("en-US", { weekday: "long" })
+									.toLowerCase();
+
+								for (const pattern of Object.keys(dayPatterns)) {
+									if (
+										pattern !== "next week" &&
+										pattern !== "tomorrow" &&
+										pattern !== "day after tomorrow" &&
+										messageLower.includes(pattern) &&
+										dayName === pattern
+									) {
+										targetDayIndex = i;
+										break;
+									}
+								}
+							}
+						}
+
+						setSelectedDay(targetDayIndex);
 					}
 				} else {
 					console.log(`App: No weather data returned for ${city}`);
@@ -258,7 +334,9 @@ OUTFIT: [2-sentence outfit suggestions]`;
 	};
 
 	return (
-		<div className="app">
+		<ThemeProvider>
+			<TemperatureProvider>
+				<div className="app">
 			{/* Header Section - Improved Glow */}
 			<header className="header">
 				<div className="header-content">
@@ -270,9 +348,14 @@ OUTFIT: [2-sentence outfit suggestions]`;
 							Chasing storms. Perfecting precision. ⚡
 						</p>
 					</div>
-					<button className="about-btn" onClick={() => setShowAbout(true)}>
-						ℹ️ About
-					</button>
+					<div className="header-buttons">
+						<button className="settings-btn" onClick={() => setShowSettings(true)}>
+							⚙️ Settings
+						</button>
+						<button className="about-btn" onClick={() => setShowAbout(true)}>
+							ℹ️ About
+						</button>
+					</div>
 				</div>
 			</header>
 
@@ -308,7 +391,7 @@ OUTFIT: [2-sentence outfit suggestions]`;
 							<>
 								{/* Day Selection Tabs - Organized chronologically starting from current day */}
 								<div className="day-selector">
-									{weatherData.forecast.forecastday.map((day, idx) => {
+									{weatherData.forecast.forecastday.slice(0, 7).map((day, idx) => {
 										const dayDate = new Date(day.date);
 										const currentDayIndex = findCurrentDayIndex(
 											weatherData.forecast.forecastday
@@ -380,7 +463,7 @@ OUTFIT: [2-sentence outfit suggestions]`;
 				)}
 
 			<footer>
-				<p style={{ color: "#B3B7C4", marginTop: "2rem" }}>
+				<p>
 					Designed with React & Vite⚡by the StormStream Team
 				</p>
 			</footer>
@@ -400,6 +483,9 @@ OUTFIT: [2-sentence outfit suggestions]`;
 				<About onClose={handleAboutClose} isWelcome={!hasVisitedMain} />
 			)}
 
+			{/* Settings Modal */}
+			{showSettings && <Settings onClose={() => setShowSettings(false)} />}
+
 			{/* Schedule Table Overlay */}
 			{showScheduleTable && scheduleData && (
 				<ScheduleTable
@@ -409,7 +495,9 @@ OUTFIT: [2-sentence outfit suggestions]`;
 					onSave={handleScheduleSave}
 				/>
 			)}
-		</div>
+			</div>
+			</TemperatureProvider>
+		</ThemeProvider>
 	);
 }
 

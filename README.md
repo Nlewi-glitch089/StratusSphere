@@ -90,18 +90,21 @@ Visit `http://localhost:5173` in your browser.
 ## 📖 How It Works
 
 ### Weather Forecasting
+
 1. User enters a city or asks about weather
 2. SearchBar detects location input and converts to weather query
 3. App calls WeatherAPI.com for real-time data
 4. Forecast displays as interactive cards and hourly charts
 
 ### AI Assistance
+
 1. User asks for schedule, outfit, or activity recommendations
 2. ChatGPT receives real-time weather context from WeatherAPI.com
 3. AI generates personalized suggestions (weather notes, outfits, activities)
 4. For schedules: Each item auto-generates weather + outfit suggestions + images
 
 ### Smart Schedules
+
 1. User asks AI to create a schedule (e.g., "Plan my day in NYC")
 2. AI generates schedule structure with times and activities
 3. For each item: Weather and outfit are auto-generated from WeatherAPI.com data
@@ -111,6 +114,7 @@ Visit `http://localhost:5173` in your browser.
 ## 🎨 Key Features in Detail
 
 ### Real-Time Weather Integration
+
 - Automatic city detection from user input
 - City slang recognition (philly → Philadelphia, NYC → New York, etc.)
 - 10-day forecast with hourly breakdowns
@@ -118,12 +122,14 @@ Visit `http://localhost:5173` in your browser.
 - Weather alerts and severe weather notifications
 
 ### AI-Powered Suggestions
+
 - **Weather Analysis**: Current conditions + forecast context
 - **Outfit Recommendations**: Weather-appropriate clothing suggestions (2 sentences max)
 - **Activity Ideas**: Indoor/outdoor activities based on forecast
 - **Schedule Builder**: Auto-creates detailed daily plans with times
 
 ### Interactive Schedule Editor
+
 - Drag-and-drop row and column reordering
 - AI-powered field editing with loading states
 - Visual feedback for editing and drag operations
@@ -132,17 +138,20 @@ Visit `http://localhost:5173` in your browser.
 ## 🔑 API Keys Required
 
 ### WeatherAPI.com (Required)
+
 - **Cost**: Free tier (1 million calls/month)
 - **Signup**: https://www.weatherapi.com/
 - **Documentation**: https://www.weatherapi.com/docs/
 - **Features**: Current weather, 10-day forecast, hourly data, alerts
 
 ### OpenAI API (Required)
+
 - **Cost**: Pay-as-you-go (~$0.01 per chat message)
 - **Signup**: https://platform.openai.com/
 - **Model**: gpt-4o-mini (fast and affordable)
 
 ### Unsplash API (Optional)
+
 - **Cost**: Free tier (50 requests/hour)
 - **Signup**: https://unsplash.com/developers
 - **Used for**: Outfit suggestion images
@@ -155,17 +164,20 @@ Visit `http://localhost:5173` in your browser.
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 npm run build
 vercel deploy
 ```
 
 **Important**: Add your environment variables in Vercel dashboard:
+
 - `VITE_OPENAI_API_KEY`
 - `VITE_WEATHERAPI_KEY`
 - `VITE_UNSPLASH_KEY` (optional)
 
 ### Netlify
+
 ```bash
 npm run build
 netlify deploy --prod --dir=dist
@@ -176,16 +188,19 @@ Add environment variables in Netlify Site Settings > Build & Deploy > Environmen
 ## 🐛 Troubleshooting
 
 ### Weather not loading?
+
 - Check browser console (F12) for API errors
 - Verify WeatherAPI.com key is correct and in `.env.local`
 - Try a major city name (e.g., "London", "Tokyo")
 
 ### AI responses are slow?
+
 - OpenAI API might be under load
 - Check your API key has sufficient credits
 - Weather context fetching might be slow (check network tab)
 
 ### Outfit images not showing?
+
 - Falls back to generic image if Unsplash API not configured
 - Add `VITE_UNSPLASH_KEY` to `.env.local` for custom images
 - Check browser console for image fetch errors
@@ -205,6 +220,7 @@ Add environment variables in Netlify Site Settings > Build & Deploy > Environmen
 **Team Stratus: StormStream**
 
 This project demonstrates collaborative development with:
+
 - Responsive component architecture
 - Seamless API integration
 - Interactive UI/UX design

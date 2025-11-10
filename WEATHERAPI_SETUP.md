@@ -1,6 +1,7 @@
 # WeatherAPI.com Integration Setup
 
 ## Overview
+
 StratusSphere now uses **weatherapi.com** for real-time weather forecasts (current conditions, hourly, and daily forecasts). ChatGPT handles all other AI-powered features (weather suggestions, outfit recommendations, scheduling).
 
 ## Setup Instructions
@@ -60,57 +61,57 @@ The weatherapi.com API returns data in this structure:
 
 ```json
 {
-  "location": {
-    "name": "New York",
-    "region": "New York",
-    "country": "United States",
-    "lat": 40.71,
-    "lon": -74.01,
-    "tz_id": "America/New_York",
-    "localtime_epoch": 1234567890,
-    "localtime": "2024-01-15 14:30"
-  },
-  "current": {
-    "temp_c": 5.2,
-    "temp_f": 41.4,
-    "humidity": 72,
-    "feelslike_c": 2.8,
-    "feelslike_f": 37.0,
-    "wind_kph": 12.5,
-    "condition": {
-      "text": "Partly cloudy",
-      "icon": "//cdn.weatherapi.com/weather/128x128/day/302.png"
-    }
-  },
-  "forecast": {
-    "forecastday": [
-      {
-        "date": "2024-01-15",
-        "day": {
-          "maxtemp_c": 8.5,
-          "mintemp_c": 3.2,
-          "condition": {
-            "text": "Partly cloudy",
-            "icon": "//cdn.weatherapi.com/weather/128x128/day/302.png"
-          }
-        },
-        "hour": [
-          {
-            "time": "2024-01-15 00:00",
-            "temp_c": 4.2,
-            "humidity": 70,
-            "wind_kph": 10.5,
-            "condition": {
-              "text": "Clear",
-              "icon": "//cdn.weatherapi.com/weather/128x128/night/113.png"
-            }
-          },
-          // ... more hours
-        ]
-      },
-      // ... more days
-    ]
-  }
+	"location": {
+		"name": "New York",
+		"region": "New York",
+		"country": "United States",
+		"lat": 40.71,
+		"lon": -74.01,
+		"tz_id": "America/New_York",
+		"localtime_epoch": 1234567890,
+		"localtime": "2024-01-15 14:30"
+	},
+	"current": {
+		"temp_c": 5.2,
+		"temp_f": 41.4,
+		"humidity": 72,
+		"feelslike_c": 2.8,
+		"feelslike_f": 37.0,
+		"wind_kph": 12.5,
+		"condition": {
+			"text": "Partly cloudy",
+			"icon": "//cdn.weatherapi.com/weather/128x128/day/302.png"
+		}
+	},
+	"forecast": {
+		"forecastday": [
+			{
+				"date": "2024-01-15",
+				"day": {
+					"maxtemp_c": 8.5,
+					"mintemp_c": 3.2,
+					"condition": {
+						"text": "Partly cloudy",
+						"icon": "//cdn.weatherapi.com/weather/128x128/day/302.png"
+					}
+				},
+				"hour": [
+					{
+						"time": "2024-01-15 00:00",
+						"temp_c": 4.2,
+						"humidity": 70,
+						"wind_kph": 10.5,
+						"condition": {
+							"text": "Clear",
+							"icon": "//cdn.weatherapi.com/weather/128x128/night/113.png"
+						}
+					}
+					// ... more hours
+				]
+			}
+			// ... more days
+		]
+	}
 }
 ```
 
@@ -121,15 +122,18 @@ The integration replaces the Open-Meteo API calls with weatherapi.com in:
 ### File: `src/hooks/useWeatherChat.js`
 
 **New Function**: `fetchWeatherFromWeatherAPI(city)`
+
 - Replaces `fetchRealTimeWeather(city)`
 - Calls: `https://api.weatherapi.com/v1/forecast.json`
 - Returns standardized weather data object
 
 **Updated Functions**:
+
 - `getWeatherForCity(city)` - Now uses weatherapi.com
 - `sendChatMessageWithCity(userMessage, conversationHistory, overrideCity)` - Pulls forecast from weatherapi.com
 
 ### Changes from Open-Meteo:
+
 - ✅ No geocoding step needed (weatherapi.com handles city names directly)
 - ✅ Simpler API call (single endpoint instead of two)
 - ✅ Faster response times
@@ -141,6 +145,7 @@ The integration replaces the Open-Meteo API calls with weatherapi.com in:
 ### Error: "VITE_WEATHERAPI_KEY is not defined"
 
 **Solution**: Make sure your `.env.local` file is in the root directory and contains:
+
 ```
 VITE_WEATHERAPI_KEY=your_actual_key_here
 ```
@@ -149,7 +154,8 @@ Restart the dev server after adding the env variable.
 
 ### Error: "Weather data not available"
 
-**Solution**: 
+**Solution**:
+
 - Verify your API key is correct
 - Check your remaining API calls at https://www.weatherapi.com/my/account.jsp
 - Ensure the city name is valid (try a major city like "London" or "Tokyo")
@@ -157,6 +163,7 @@ Restart the dev server after adding the env variable.
 ### Missing Forecast Data
 
 **Solution**: The API might be returning incomplete data. Check:
+
 - Browser Console for API response errors
 - That you're requesting a valid forecast day (current day to +10 days)
 - Your API key has forecast access enabled
@@ -164,6 +171,7 @@ Restart the dev server after adding the env variable.
 ## Features Supported by ChatGPT
 
 ChatGPT still handles:
+
 - ✅ Weather-based outfit recommendations
 - ✅ Activity suggestions based on forecast
 - ✅ Personalized weather advice
@@ -174,6 +182,7 @@ ChatGPT still handles:
 ## API Documentation
 
 For more details on weatherapi.com capabilities:
+
 - Full Documentation: https://www.weatherapi.com/docs/
 - API Console: https://www.weatherapi.com/api-explorer.aspx
 - Postman Collection: https://www.getpostman.com/collections/f5e2e0aded98ba47a4da
@@ -181,6 +190,7 @@ For more details on weatherapi.com capabilities:
 ## Costs
 
 **WeatherAPI.com Free Tier**:
+
 - No payment required
 - 1 million API calls per month
 - Current conditions + 10-day forecast

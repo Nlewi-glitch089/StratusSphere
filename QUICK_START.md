@@ -3,6 +3,7 @@
 ## 🚀 Get Started in 3 Steps
 
 ### Step 1: Get Your API Key (2 minutes)
+
 1. Go to: https://www.weatherapi.com/
 2. Click **"Sign Up"** (top right)
 3. Complete signup (no credit card needed)
@@ -10,13 +11,16 @@
 5. Copy your API key from the dashboard
 
 ### Step 2: Add to Your Project (1 minute)
+
 Create `.env.local` in the project root:
+
 ```env
 VITE_WEATHERAPI_KEY=paste_your_key_here
 VITE_OPENAI_API_KEY=your_openai_key
 ```
 
 ### Step 3: Start Building (30 seconds)
+
 ```bash
 npm run dev
 ```
@@ -31,13 +35,14 @@ Done! ✨
 ✅ Get outfit recommendations  
 ✅ Create AI-powered schedules  
 ✅ See hourly forecasts  
-✅ Get activity suggestions  
+✅ Get activity suggestions
 
 ---
 
 ## 🔍 Test It
 
 Try these in the chat:
+
 - "What's the weather in London?"
 - "Plan my day in NYC"
 - "What should I wear tomorrow in philly?"
@@ -55,15 +60,18 @@ Try these in the chat:
 ## ❌ If Something's Wrong
 
 **Error: "VITE_WEATHERAPI_KEY is not defined"**
+
 - Check `.env.local` file exists in root folder
 - Verify key is correct
 - Restart dev server: `npm run dev`
 
 **Error: "City not found"**
+
 - Try a different city (spell check!)
 - Try major cities: London, NYC, Tokyo
 
 **Weather not loading?**
+
 - Check browser console (F12)
 - Verify API key is correct
 - Check your remaining API calls: https://www.weatherapi.com/my/account.jsp
@@ -73,6 +81,7 @@ Try these in the chat:
 ## 💰 Pricing
 
 **Free Tier**:
+
 - 1,000,000 API calls per month
 - 10-day forecast
 - Hourly data

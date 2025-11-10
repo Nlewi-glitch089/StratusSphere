@@ -144,7 +144,7 @@ export async function sendChatMessage(userMessage, conversationHistory) {
     if (city) {
       try {
         console.log(`Fetching real-time weather for: ${city}`);
-        const realWeather = await fetchRealTimeWeather(city);
+        const realWeather = await fetchWeatherFromWeatherAPI(city);
         if (realWeather) {
           console.log(`Successfully fetched weather for: ${realWeather.location.name}`);
           weatherContext = `

@@ -1,8 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
+import { TemperatureContext } from "../context/TemperatureContext";
 
 function HourlyLineChart({ hourlyData, showAll = false }) {
 	const canvasRef = useRef(null);
 	const [hoveredPoint, setHoveredPoint] = useState(null);
+	const { temperatureUnit } = useContext(TemperatureContext);
 
 	// Filter data based on showAll prop
 	const displayData = showAll
@@ -93,13 +95,22 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 		const textColor = "#b3b7c4"; // silver-mist
 		const gridColor = "rgba(179, 183, 196, 0.2)";
 
+		// Helper to get temperature based on selected unit
+		const getTemp = (data) => {
+			if (temperatureUnit === "F") {
+				return data.temp_f;
+			} else {
+				return Math.round(data.temp_c);
+			}
+		};
+
 		// Calculate dimensions and margins
-		const margin = { top: 40, right: 20, bottom: 80, left: 20 };
+		const margin = { top: 40, right: 20, bottom: 80, left: 50 };
 		const chartWidth = width - margin.left - margin.right;
 		const chartHeight = height - margin.top - margin.bottom;
 
 		// Get temperature range
-		const temps = displayData.map((d) => d.temp_c);
+		const temps = displayData.map((d) => getTemp(d));
 		const minTemp = Math.min(...temps);
 		const maxTemp = Math.max(...temps);
 		const tempRange = maxTemp - minTemp || 10; // Fallback if all temps are same
@@ -132,7 +143,11 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 			ctx.fillStyle = textColor;
 			ctx.font = "12px system-ui";
 			ctx.textAlign = "right";
-			ctx.fillText(`${Math.round(temp)}°`, margin.left - 10, y + 4);
+			ctx.fillText(
+				`${Math.round(temp)}°${temperatureUnit}`,
+				margin.left - 10,
+				y + 4
+			);
 		}
 
 		// Vertical grid lines (time)
@@ -165,7 +180,7 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 		ctx.moveTo(xScale(0), margin.top + chartHeight);
 		displayData.forEach((data, index) => {
 			const x = xScale(index);
-			const y = yScale(data.temp_c);
+			const y = yScale(getTemp(data));
 			if (index === 0) {
 				ctx.lineTo(x, y);
 			} else {
@@ -186,7 +201,7 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 
 		displayData.forEach((data, index) => {
 			const x = xScale(index);
-			const y = yScale(data.temp_c);
+			const y = yScale(getTemp(data));
 			if (index === 0) {
 				ctx.moveTo(x, y);
 			} else {
@@ -198,7 +213,7 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 		// Draw weather icons above the line
 		displayData.forEach((data, index) => {
 			const x = xScale(index);
-			const y = yScale(data.temp_c);
+			const y = yScale(getTemp(data));
 			const iconY = y - 25; // Position icons above the temperature points
 
 			// Draw weather emoji
@@ -226,7 +241,7 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 		// Draw points
 		displayData.forEach((data, index) => {
 			const x = xScale(index);
-			const y = yScale(data.temp_c);
+			const y = yScale(getTemp(data));
 
 			ctx.beginPath();
 			ctx.arc(x, y, hoveredPoint === index ? 6 : 4, 0, 2 * Math.PI);
@@ -290,7 +305,7 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 		<div className="hourly-line-chart">
 			<canvas
 				ref={canvasRef}
-				width={showAll ? Math.max(1200, hourlyData.length * 50) : 800}
+				width={showAll ? 1000 : 800}
 				height={280}
 				onMouseMove={handleMouseMove}
 				onMouseLeave={handleMouseLeave}
@@ -314,7 +329,12 @@ function HourlyLineChart({ hourlyData, showAll = false }) {
 								}
 							)}
 						</strong>
-						<div>{Math.round(displayData[hoveredPoint].temp_c)}°C</div>
+						<div>
+							{temperatureUnit === "F"
+								? Math.round(displayData[hoveredPoint].temp_f)
+								: Math.round(displayData[hoveredPoint].temp_c)}
+							°{temperatureUnit}
+						</div>
 						<div className="condition">
 							{displayData[hoveredPoint].condition.text}
 						</div>

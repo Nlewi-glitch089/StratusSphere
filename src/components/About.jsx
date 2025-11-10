@@ -151,126 +151,119 @@ function About({ onClose, isWelcome = false }) {
 						</p>
 
 						<div className="comparison-table-wrapper">
-							<table className="comparison-table">
-								<thead>
-									<tr>
-										<th>Feature</th>
-										<th className="stratussphere-col">StratusSphere</th>
-										<th>Weather.com</th>
-										<th>AccuWeather</th>
-										<th>WeatherUnderground</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td className="feature-name">
-											AI-Powered Personal Assistant
-										</td>
-										<td className="stratussphere-col">
-											✅ Storm AI with GPT-4
-										</td>
-										<td>❌ Basic chatbot</td>
-										<td>❌ No AI assistant</td>
-										<td>❌ No AI features</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Smart Schedule Planning</td>
-										<td className="stratussphere-col">
-											✅ Auto-generated & editable
-										</td>
-										<td>❌ Manual planning only</td>
-										<td>❌ No schedule features</td>
-										<td>❌ No planning tools</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Interactive Weather Charts</td>
-										<td className="stratussphere-col">
-											✅ Custom HTML5 Canvas charts
-										</td>
-										<td>✅ Basic charts</td>
-										<td>✅ Standard graphs</td>
-										<td>✅ Simple visualizations</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Outfit Recommendations</td>
-										<td className="stratussphere-col">
-											✅ AI-powered suggestions
-										</td>
-										<td>❌ Generic tips only</td>
-										<td>✅ Basic recommendations</td>
-										<td>❌ No outfit features</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Draggable Interface</td>
-										<td className="stratussphere-col">
-											✅ Fully customizable UI
-										</td>
-										<td>❌ Fixed layout</td>
-										<td>❌ Static interface</td>
-										<td>❌ Traditional layout</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Schedule Export/Print</td>
-										<td className="stratussphere-col">
-											✅ CSV & Print support
-										</td>
-										<td>❌ No export features</td>
-										<td>❌ Limited sharing</td>
-										<td>❌ No export options</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Real-time Weather Data</td>
-										<td className="stratussphere-col">✅ Open-Meteo API</td>
-										<td>✅ Proprietary data</td>
-										<td>✅ AccuWeather data</td>
-										<td>✅ Community + professional</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Mobile Responsive</td>
-										<td className="stratussphere-col">
-											✅ Mobile-first design
-										</td>
-										<td>✅ Mobile app available</td>
-										<td>✅ Mobile optimized</td>
-										<td>✅ Responsive design</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Activity Suggestions</td>
-										<td className="stratussphere-col">
-											✅ AI-powered recommendations
-										</td>
-										<td>❌ Basic weather info only</td>
-										<td>❌ Limited activity features</td>
-										<td>❌ No activity planning</td>
-									</tr>
-									<tr>
-										<td className="feature-name">Personalized Experience</td>
-										<td className="stratussphere-col">
-											✅ Fully customizable & intelligent
-										</td>
-										<td>⚠️ Limited personalization</td>
-										<td>⚠️ Basic customization</td>
-										<td>⚠️ Some personal features</td>
-									</tr>
-								</tbody>
-							</table>
+							<div className="comparison-table-box">
+								<table className="comparison-table">
+									<thead>
+										<tr>
+											<th>Feature</th>
+											<th className="stratussphere-col">StratusSphere</th>
+											<th>Weather.com</th>
+											<th>AccuWeather</th>
+											<th>WeatherUnderground</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td className="feature-name">
+												AI-Powered Personal Assistant
+											</td>
+											<td className="stratussphere-col">
+												✅ Storm AI with GPT-4
+											</td>
+											<td>❌ Basic chatbot</td>
+											<td>❌ No AI assistant</td>
+											<td>❌ No AI features</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Smart Schedule Planning</td>
+											<td className="stratussphere-col">
+												✅ Auto-generated & editable
+											</td>
+											<td>❌ Manual planning only</td>
+											<td>❌ No schedule features</td>
+											<td>❌ No planning tools</td>
+										</tr>
+										<tr>
+											<td className="feature-name">
+												Interactive Weather Charts
+											</td>
+											<td className="stratussphere-col">
+												✅ Custom HTML5 Canvas charts
+											</td>
+											<td>✅ Basic charts</td>
+											<td>✅ Standard graphs</td>
+											<td>✅ Simple visualizations</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Outfit Recommendations</td>
+											<td className="stratussphere-col">
+												✅ AI-powered suggestions
+											</td>
+											<td>❌ Generic tips only</td>
+											<td>✅ Basic recommendations</td>
+											<td>❌ No outfit features</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Draggable Interface</td>
+											<td className="stratussphere-col">
+												✅ Fully customizable UI
+											</td>
+											<td>❌ Fixed layout</td>
+											<td>❌ Static interface</td>
+											<td>❌ Traditional layout</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Schedule Export/Print</td>
+											<td className="stratussphere-col">
+												✅ CSV & Print support
+											</td>
+											<td>❌ No export features</td>
+											<td>❌ Limited sharing</td>
+											<td>❌ No export options</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Real-time Weather Data</td>
+											<td className="stratussphere-col">✅ Open-Meteo API</td>
+											<td>✅ Proprietary data</td>
+											<td>✅ AccuWeather data</td>
+											<td>✅ Community + professional</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Mobile Responsive</td>
+											<td className="stratussphere-col">
+												✅ Mobile-first design
+											</td>
+											<td>✅ Mobile app available</td>
+											<td>✅ Mobile optimized</td>
+											<td>✅ Responsive design</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Activity Suggestions</td>
+											<td className="stratussphere-col">
+												✅ AI-powered recommendations
+											</td>
+											<td>❌ Basic weather info only</td>
+											<td>❌ Limited activity features</td>
+											<td>❌ No activity planning</td>
+										</tr>
+										<tr>
+											<td className="feature-name">Personalized Experience</td>
+											<td className="stratussphere-col">
+												✅ Fully customizable & intelligent
+											</td>
+											<td>⚠️ Limited personalization</td>
+											<td>⚠️ Basic customization</td>
+											<td>⚠️ Some personal features</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
+				</div>
 
-					<div className="about-tech">
-						<h3>🔧 Technology Stack</h3>
-						<div className="tech-grid">
-							<span className="tech-badge">React 18</span>
-							<span className="tech-badge">Vite</span>
-							<span className="tech-badge">HTML5 Canvas</span>
-							<span className="tech-badge">CSS3</span>
-							<span className="tech-badge">OpenAI GPT-4</span>
-							<span className="tech-badge">Open-Meteo API</span>
-							<span className="tech-badge">JavaScript ES6+</span>
-						</div>
-					</div>
-
-					<div className="about-footer">
+				<div className="about-footer">
+					<div className="footer-content">
 						<p>
 							Built with ❤️ for weather enthusiasts and productivity seekers
 							everywhere.
@@ -278,25 +271,28 @@ function About({ onClose, isWelcome = false }) {
 						<p className="version-info">
 							Version 1.0.0 | Last updated: November 2025
 						</p>
-						{isWelcome && (
-							<div className="welcome-actions">
-								<button className="get-started-btn" onClick={onClose}>
-									Get Started with StratusSphere
-								</button>
-								<p className="welcome-note">
-									Ready to experience intelligent weather planning? Click above
-									to launch the app!
-								</p>
-							</div>
-						)}
-						{!isWelcome && (
-							<div className="about-actions">
-								<button className="return-to-app-btn" onClick={onClose}>
-									Return to Weather App
-								</button>
-							</div>
-						)}
+						<p className="footer-credit">
+							Designed with React & Vite⚡by the StormStream Team
+						</p>
 					</div>
+					{isWelcome && (
+						<div className="welcome-actions">
+							<button className="get-started-btn" onClick={onClose}>
+								Get Started with StratusSphere
+							</button>
+							<p className="welcome-note">
+								Ready to experience intelligent weather planning? Click above to
+								launch the app!
+							</p>
+						</div>
+					)}
+					{!isWelcome && (
+						<div className="about-actions">
+							<button className="return-to-app-btn" onClick={onClose}>
+								Return to Weather App
+							</button>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
